@@ -13,5 +13,9 @@ UCLASS()
 class GAS_RPG_PROJECT_API ARPG_Enemy_Character : public ARPG_Gas_Character
 {
 	GENERATED_BODY()
-	
+public:
+	ARPG_Enemy_Character();
+
+protected:
+	virtual void BeginPlay() override;
 };
