@@ -12,6 +12,7 @@ URPG_OverlayWidgetController* ARPG_HUD::GetOverlayWidgetController(const FWidget
 	{
 		OverlayWidgetController = NewObject<URPG_OverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
+		OverlayWidgetController->BindCallbacksToDependencies();
 
 		return OverlayWidgetController;
 	}
@@ -31,5 +32,6 @@ void ARPG_HUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 
 	OverlayWidget->SetWidgetController(overlayWidgetController);
 
+	overlayWidgetController->BroadcastInitialValues();
 	widget->AddToViewport();
 }

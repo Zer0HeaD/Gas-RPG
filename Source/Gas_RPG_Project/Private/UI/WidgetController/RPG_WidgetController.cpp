@@ -15,3 +15,7 @@ void URPG_WidgetController::SetWidgetControllerParams(const FWidgetControllerPar
 void URPG_WidgetController::BroadcastInitialValues()
 {
 }
+
+void URPG_WidgetController::BindCallbacksToDependencies()
+{
+}
