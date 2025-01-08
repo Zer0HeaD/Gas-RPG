@@ -9,6 +9,8 @@
 
 #include <AbilitySystem/RPG_AbilitySystemComponent.h>
 #include <AbilitySystem/RPG_AttributeSet.h>
+#include <Player/RPG_PlayerController.h>
+#include "UI/HUD/RPG_HUD.h"
 
 ARPG_Player_Character::ARPG_Player_Character()
 {
@@ -38,6 +40,15 @@ void ARPG_Player_Character::InitAbilityActorInfo()
 	RPG_PlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(RPG_PlayerState, this);
 	AbilitySystemComponent = RPG_PlayerState->GetAbilitySystemComponent();
 	AttributeSet = RPG_PlayerState->GetAttributeSet();
+
+	if (ARPG_PlayerController* RPG_PlayerController = Cast<ARPG_PlayerController>(GetController()))
+	{
+		if (ARPG_HUD* RPG_HUD = Cast<ARPG_HUD>(RPG_PlayerController->GetHUD()))
+		{
+			RPG_HUD->InitOverlay(RPG_PlayerController, RPG_PlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
+
 }
 
 void ARPG_Player_Character::BeginPlay()
