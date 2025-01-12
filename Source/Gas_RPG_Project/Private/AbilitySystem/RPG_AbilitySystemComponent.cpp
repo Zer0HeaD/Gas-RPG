@@ -13,5 +13,8 @@ void URPG_AbilitySystemComponent::EffectApplied(
 	const FGameplayEffectSpec& EffectSpec, 
 	FActiveGameplayEffectHandle ActiveffectHandle)
 {
-	GEngine->AddOnScreenDebugMessage(1, 8.f, FColor::Blue, FString("Effect Applied!"));
+	FGameplayTagContainer TagContainer;
+	EffectSpec.GetAllAssetTags(TagContainer);
+
+	EffectAssetTags.Broadcast(TagContainer);
 }

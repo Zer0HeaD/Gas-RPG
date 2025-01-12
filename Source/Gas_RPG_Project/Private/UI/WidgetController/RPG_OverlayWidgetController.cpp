@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/RPG_OverlayWidgetController.h"
 #include "AbilitySystem/RPG_AttributeSet.h"
+#include <AbilitySystem/RPG_AbilitySystemComponent.h>
 
 void URPG_OverlayWidgetController::BroadcastInitialValues()
 {
@@ -36,6 +37,33 @@ void URPG_OverlayWidgetController::BindCallbacksToDependencies()
 		RPG_AttributeSet->GetStaminaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::StaminaChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		RPG_AttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::MaxStaminaChanged);
+
+	Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
+		[this](const FGameplayTagContainer& AssetTags)
+		{
+			for (const auto& Tag : AssetTags)
+			{
+				// check if tag is a part of "Message" hierarchy
+				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+				if (Tag.MatchesTag(MessageTag))
+				{
+					// debug
+					const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
+					GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
+
+					// broadcast to UI Widget
+					const FUIWidgetRow* WidgetRow = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+					MessageWidgetRowDelegate.Broadcast(*WidgetRow);
+				}
+				else
+				{
+					// debug
+					const FString Msg = FString::Printf(TEXT("GE Tag: %s IS NO UNDER 'MESSAGE' HIERARCHY!"), *Tag.ToString());
+					GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Red, Msg);
+				}
+			}
+		}
+	);
 }
 
 void URPG_OverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
