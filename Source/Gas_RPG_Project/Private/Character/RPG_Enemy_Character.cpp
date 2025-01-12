@@ -18,5 +18,11 @@ void ARPG_Enemy_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitAbilityActorInfo();
+}
+
+void ARPG_Enemy_Character::InitAbilityActorInfo()
+{
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 }

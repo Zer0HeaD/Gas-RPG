@@ -28,3 +28,7 @@ void ARPG_Gas_Character::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
+void ARPG_Gas_Character::InitAbilityActorInfo()
+{
+}

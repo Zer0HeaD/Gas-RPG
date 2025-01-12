@@ -13,6 +13,9 @@ void URPG_OverlayWidgetController::BroadcastInitialValues()
 
 	OnManaChanged.Broadcast(RPG_AttributeSet->GetMana());
 	OnMaxManaChanged.Broadcast(RPG_AttributeSet->GetMaxMana());
+
+	OnStaminaChanged.Broadcast(RPG_AttributeSet->GetStamina());
+	OnMaxStaminaChanged.Broadcast(RPG_AttributeSet->GetMaxStamina());
 }
 
 void URPG_OverlayWidgetController::BindCallbacksToDependencies()
@@ -28,6 +31,11 @@ void URPG_OverlayWidgetController::BindCallbacksToDependencies()
 		RPG_AttributeSet->GetManaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::ManaChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		RPG_AttributeSet->GetMaxManaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::MaxManaChanged);
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		RPG_AttributeSet->GetStaminaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::StaminaChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		RPG_AttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::MaxStaminaChanged);
 }
 
 void URPG_OverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
@@ -48,4 +56,14 @@ void URPG_OverlayWidgetController::ManaChanged(const FOnAttributeChangeData& Dat
 void URPG_OverlayWidgetController::MaxManaChanged(const FOnAttributeChangeData& Data) const
 {
 	OnMaxManaChanged.Broadcast(Data.NewValue);
+}
+
+void URPG_OverlayWidgetController::StaminaChanged(const FOnAttributeChangeData& Data) const
+{
+	OnStaminaChanged.Broadcast(Data.NewValue);
+}
+
+void URPG_OverlayWidgetController::MaxStaminaChanged(const FOnAttributeChangeData& Data) const
+{
+	OnMaxStaminaChanged.Broadcast(Data.NewValue);
 }

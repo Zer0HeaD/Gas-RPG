@@ -52,5 +52,5 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 private:
-	void InitAbilityActorInfo();
+	void InitAbilityActorInfo() override;
 };

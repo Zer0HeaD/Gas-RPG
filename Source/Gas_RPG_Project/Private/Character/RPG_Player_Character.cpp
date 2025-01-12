@@ -38,6 +38,9 @@ void ARPG_Player_Character::InitAbilityActorInfo()
 	ARPG_PlayerState* RPG_PlayerState = GetPlayerState<ARPG_PlayerState>();
 	check(RPG_PlayerState);
 	RPG_PlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(RPG_PlayerState, this);
+
+	Cast<URPG_AbilitySystemComponent>(RPG_PlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
+
 	AbilitySystemComponent = RPG_PlayerState->GetAbilitySystemComponent();
 	AttributeSet = RPG_PlayerState->GetAttributeSet();
 

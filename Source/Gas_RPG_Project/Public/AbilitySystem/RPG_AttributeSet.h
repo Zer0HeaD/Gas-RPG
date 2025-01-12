@@ -13,6 +13,26 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+
+USTRUCT()
+struct FEffectProperties
+{
+	GENERATED_BODY()
+
+	FEffectProperties(){}
+
+	FGameplayEffectContextHandle EffectContextHandle;
+
+	UPROPERTY() UAbilitySystemComponent* SourceASC = nullptr;
+	UPROPERTY() AActor* SourceAvatarActor = nullptr;
+	UPROPERTY() AController* SourceController = nullptr;
+	UPROPERTY() ACharacter* SourceCharacter = nullptr;
+
+	UPROPERTY() UAbilitySystemComponent* TargetASC = nullptr;
+	UPROPERTY() AActor* TargetAvatarActor = nullptr;
+	UPROPERTY() AController* TargetController = nullptr;
+	UPROPERTY() ACharacter* TargetCharacter = nullptr;
+};
 /**
  * 
  */
@@ -24,7 +44,8 @@ class GAS_RPG_PROJECT_API URPG_AttributeSet : public UAttributeSet
 public:
 	URPG_AttributeSet();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	/// ATTRIBUTES
 	/// Attributes for characters
@@ -44,9 +65,24 @@ public:
 		FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, MaxMana);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Vital Attributes")
+	FGameplayAttributeData Stamina;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Stamina);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina, Category = "Vital Attributes")
+	FGameplayAttributeData MaxStamina;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, MaxStamina);
+
 	UFUNCTION() void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 	UFUNCTION() void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
 	UFUNCTION() void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
 	UFUNCTION() void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+
+	UFUNCTION() void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+	UFUNCTION() void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
+
+private:
+
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };
