@@ -19,15 +19,8 @@ struct FUIWidgetRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) UTexture2D* Image = nullptr;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStaminaChangedSignature, float, NewStamina);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxStaminaChangedSignature, float, NewMaxStamina);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
 /**
@@ -42,13 +35,13 @@ public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnHealthChangedSignature OnHealthChanged;
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnMaxHealthChangedSignature OnMaxHealthChanged;
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnManaChangedSignature OnManaChanged;
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnMaxManaChangedSignature OnMaxManaChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnAttributeChangedSignature OnHealthChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnAttributeChangedSignature OnMaxHealthChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnAttributeChangedSignature OnManaChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnAttributeChangedSignature OnMaxManaChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnStaminaChangedSignature OnStaminaChanged;
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnMaxStaminaChangedSignature OnMaxStaminaChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnAttributeChangedSignature OnStaminaChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes") FOnAttributeChangedSignature OnMaxStaminaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages") FMessageWidgetRowSignature MessageWidgetRowDelegate;
 

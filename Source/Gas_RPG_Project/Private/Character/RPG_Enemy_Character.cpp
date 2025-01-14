@@ -26,3 +26,8 @@ void ARPG_Enemy_Character::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 }
+
+int32 ARPG_Enemy_Character::GetPlayerLevel()
+{
+	return Level;
+}

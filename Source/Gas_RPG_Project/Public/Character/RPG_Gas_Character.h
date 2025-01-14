@@ -5,15 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Interaction/CombatInterface.h"
 #include "RPG_Gas_Character.generated.h"
 
 
 
 class UAbilitySystemComponent;
 class UAttributeSet;
+class UGameplayEffect;
 
 UCLASS(Abstract)
-class GAS_RPG_PROJECT_API ARPG_Gas_Character : public ACharacter, public IAbilitySystemInterface
+class GAS_RPG_PROJECT_API ARPG_Gas_Character : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -33,6 +35,16 @@ protected:
 	virtual void InitAbilityActorInfo();
 
 	UPROPERTY(EditAnywhere, Category = "Combat") TObjectPtr<UStaticMeshComponent> Weapon;
+
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+
+	void InitializeDefaultAttributes() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes") 
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
 public:
 };

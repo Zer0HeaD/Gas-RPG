@@ -18,7 +18,15 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-private:
 	void InitAbilityActorInfo() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") int32 Level = 1;
+
+public:
+
+#pragma region Combat Interface
+
+	virtual int32 GetPlayerLevel() override;
+
+#pragma endregion
 };

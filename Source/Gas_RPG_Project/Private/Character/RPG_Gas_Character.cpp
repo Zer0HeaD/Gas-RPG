@@ -3,6 +3,7 @@
 
 #include "Character/RPG_Gas_Character.h"
 #include "InputActionValue.h"
+#include "AbilitySystemComponent.h"
 
 // Sets default values
 ARPG_Gas_Character::ARPG_Gas_Character()
@@ -32,3 +33,24 @@ void ARPG_Gas_Character::BeginPlay()
 void ARPG_Gas_Character::InitAbilityActorInfo()
 {
 }
+
+
+
+void ARPG_Gas_Character::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
+{
+	check(IsValid(GetAbilitySystemComponent()));
+	check(GameplayEffectClass);
+
+	const FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
+	const FGameplayEffectSpecHandle SpecHandle =
+		GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
+	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), GetAbilitySystemComponent());
+}
+
+void ARPG_Gas_Character::InitializeDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
+}
+
+

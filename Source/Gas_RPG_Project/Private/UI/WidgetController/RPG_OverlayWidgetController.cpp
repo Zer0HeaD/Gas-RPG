@@ -24,19 +24,32 @@ void URPG_OverlayWidgetController::BindCallbacksToDependencies()
 	const URPG_AttributeSet* RPG_AttributeSet = CastChecked<URPG_AttributeSet>(AttributeSet);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		RPG_AttributeSet->GetHealthAttribute()).AddUObject(this, &URPG_OverlayWidgetController::HealthChanged);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		RPG_AttributeSet->GetMaxHealthAttribute()).AddUObject(this, &URPG_OverlayWidgetController::MaxHealthChanged);
+		RPG_AttributeSet->GetHealthAttribute()).AddLambda( [this] (const FOnAttributeChangeData& Data)
+			{ OnHealthChanged.Broadcast(Data.NewValue); });
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		RPG_AttributeSet->GetManaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::ManaChanged);
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		RPG_AttributeSet->GetMaxManaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::MaxManaChanged);
+		RPG_AttributeSet->GetMaxHealthAttribute()).AddLambda( [this] (const FOnAttributeChangeData& Data)
+			{OnMaxHealthChanged.Broadcast(Data.NewValue);});
+
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		RPG_AttributeSet->GetStaminaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::StaminaChanged);
+		RPG_AttributeSet->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+			{OnManaChanged.Broadcast(Data.NewValue); });
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		RPG_AttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &URPG_OverlayWidgetController::MaxStaminaChanged);
+		RPG_AttributeSet->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+			{OnMaxManaChanged.Broadcast(Data.NewValue); });
+
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		RPG_AttributeSet->GetStaminaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+			{OnStaminaChanged.Broadcast(Data.NewValue); });
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		RPG_AttributeSet->GetMaxStaminaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+			{OnMaxStaminaChanged.Broadcast(Data.NewValue); });
+
+
 
 	Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)

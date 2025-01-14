@@ -38,6 +38,12 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+#pragma region Combat Interface
+
+	virtual int32 GetPlayerLevel() override;
+
+#pragma endregion
+
 protected:
 	virtual void BeginPlay() override;
 

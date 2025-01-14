@@ -9,13 +9,8 @@
 
 URPG_AttributeSet::URPG_AttributeSet()
 {
-	InitMaxHealth(100.f);
 	InitHealth(50.f);
-
-	InitMaxMana(50.f);
 	InitMana(50.f);
-
-	InitMaxStamina(75.f);
 	InitStamina(75.f);
 }
 
@@ -25,12 +20,26 @@ void URPG_AttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
-
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
-
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Stamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
+
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Strength, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Resilience, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Vigor, COND_None, REPNOTIFY_Always);
+
+
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Armor, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, BlockChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, CriticalHitDamage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, CriticalHitResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, HealthRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, StaminaRegeneration, COND_None, REPNOTIFY_Always);
 }
 
 void URPG_AttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -41,27 +50,15 @@ void URPG_AttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
 	}
-	if (Attribute == GetMaxHealthAttribute())
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Health: %f"), NewValue);
-	}
 
 	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
 	}
-	if (Attribute == GetMaxManaAttribute())
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Health: %f"), NewValue);
-	}
 
 	if (Attribute == GetStaminaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxStamina());
-	}
-	if (Attribute == GetMaxStaminaAttribute())
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Health: %f"), NewValue);
 	}
 }
 
@@ -110,6 +107,21 @@ void URPG_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute()) 
+	{ 
+		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth())); 
+	}
+
+	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana())); 
+	}
+
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
+	}
 }
 
 void URPG_AttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
@@ -140,4 +152,69 @@ void URPG_AttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) 
 void URPG_AttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, MaxStamina, OldMaxStamina);
+}
+
+void URPG_AttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Strength, OldStrength);
+}
+
+void URPG_AttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Intelligence, OldIntelligence);
+}
+
+void URPG_AttributeSet::OnRep_Resilience(const FGameplayAttributeData& OldResilience) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Resilience, OldResilience);
+}
+
+void URPG_AttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Vigor, OldVigor);
+}
+
+void URPG_AttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Armor, OldArmor);
+}
+
+void URPG_AttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, ArmorPenetration, OldArmorPenetration);
+}
+
+void URPG_AttributeSet::OnRep_BlockChance(const FGameplayAttributeData& OldBlockChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, BlockChance, OldBlockChance);
+}
+
+void URPG_AttributeSet::OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, CriticalHitChance, OldCriticalHitChance);
+}
+
+void URPG_AttributeSet::OnRep_CriticalHitDamage(const FGameplayAttributeData& OldCriticalHitDamage) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, CriticalHitDamage, OldCriticalHitDamage);
+}
+
+void URPG_AttributeSet::OnRep_CriticalHitResistance(const FGameplayAttributeData& OldCriticalHitResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, CriticalHitResistance, OldCriticalHitResistance);
+}
+
+void URPG_AttributeSet::OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, HealthRegeneration, OldHealthRegeneration);
+}
+
+void URPG_AttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, ManaRegeneration, OldManaRegeneration);
+}
+
+void URPG_AttributeSet::OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, StaminaRegeneration, OldStaminaRegeneration);
 }
