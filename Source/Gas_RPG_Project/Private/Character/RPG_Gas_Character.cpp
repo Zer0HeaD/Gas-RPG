@@ -4,6 +4,7 @@
 #include "Character/RPG_Gas_Character.h"
 #include "InputActionValue.h"
 #include "AbilitySystemComponent.h"
+#include "Player/RPG_PlayerController.h"
 
 // Sets default values
 ARPG_Gas_Character::ARPG_Gas_Character()
@@ -27,7 +28,6 @@ UAbilitySystemComponent* ARPG_Gas_Character::GetAbilitySystemComponent() const
 void ARPG_Gas_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ARPG_Gas_Character::InitAbilityActorInfo()

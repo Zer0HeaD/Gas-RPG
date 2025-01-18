@@ -7,4 +7,7 @@ void URPG_UserWidget::SetWidgetController(UObject* inWidgetController)
 {
 	WidgetController = inWidgetController;
 	WidgetControllerSet();
+
 }
+
+

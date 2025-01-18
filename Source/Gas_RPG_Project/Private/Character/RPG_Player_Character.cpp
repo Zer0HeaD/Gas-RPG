@@ -11,6 +11,7 @@
 #include <AbilitySystem/RPG_AttributeSet.h>
 #include <Player/RPG_PlayerController.h>
 #include "UI/HUD/RPG_HUD.h"
+#include "UI/Widgets/RPG_UserWidget.h"
 
 ARPG_Player_Character::ARPG_Player_Character()
 {
@@ -97,6 +98,8 @@ void ARPG_Player_Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Look);
+
+		EnhancedInputComponent->BindAction(MenuAction, ETriggerEvent::Started, this, &ARPG_Player_Character::OpenMenu);
 	}
 	else
 	{
@@ -106,6 +109,7 @@ void ARPG_Player_Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 void ARPG_Player_Character::Move(const FInputActionValue& Value)
 {
+	if (bUIOpened) return;
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -129,6 +133,7 @@ void ARPG_Player_Character::Move(const FInputActionValue& Value)
 
 void ARPG_Player_Character::Look(const FInputActionValue& Value)
 {
+	if (bUIOpened) return;
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
@@ -137,6 +142,46 @@ void ARPG_Player_Character::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ARPG_Player_Character::OpenMenu()
+{
+	if (ARPG_PlayerController* RPG_PlayerController = Cast<ARPG_PlayerController>(GetController()))
+	{
+		if (!bUIOpened)
+		{
+			check(PauseMenuWidgetClass);
+
+			FInputModeGameAndUI InputMode;
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture);
+			InputMode.SetHideCursorDuringCapture(false);
+
+			PauseMenuWidget = CreateWidget<URPG_UserWidget>(RPG_PlayerController, PauseMenuWidgetClass);
+			check(PauseMenuWidget);
+
+			InputMode.SetWidgetToFocus(PauseMenuWidget->TakeWidget());
+			RPG_PlayerController->SetInputMode(InputMode);
+			RPG_PlayerController->bShowMouseCursor = true;
+
+			PauseMenuWidget->AddToViewport();
+			PauseMenuWidget->SetKeyboardFocus();
+
+			RPG_PlayerController->ConsoleCommand(TEXT("CommonUI.AlwaysShowCursor true"), true);
+			RPG_PlayerController->ConsoleCommand(TEXT("CommonUI.EnableGamepadPlatformCurso true"), true);
+		}
+		else
+		{
+			FInputModeGameOnly InputMode;
+			RPG_PlayerController->SetInputMode(InputMode);
+			RPG_PlayerController->bShowMouseCursor = false;
+
+			if (PauseMenuWidget)
+			{
+				PauseMenuWidget->RemoveFromParent();
+			}
+		}
+		bUIOpened = !bUIOpened;
 	}
 }
 

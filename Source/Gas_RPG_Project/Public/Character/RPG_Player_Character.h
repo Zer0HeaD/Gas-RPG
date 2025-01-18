@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/RPG_Gas_Character.h"
+#include "UI/Widgets/RPG_UserWidget.h"
 #include "RPG_Player_Character.generated.h"
 
 class UInputMappingContext;
@@ -33,6 +34,10 @@ class GAS_RPG_PROJECT_API ARPG_Player_Character : public ARPG_Gas_Character
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Open Menu Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MenuAction;
+
 public:
 	ARPG_Player_Character();
 	virtual void PossessedBy(AController* NewController) override;
@@ -57,6 +62,19 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	void OpenMenu();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player's Widgets", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<URPG_UserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY() TObjectPtr<URPG_UserWidget> PauseMenuWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true")) bool bUIOpened = false;
+
 private:
 	void InitAbilityActorInfo() override;
+
+public:
+
+
 };
