@@ -117,23 +117,60 @@ public:
 
 #pragma region Primary Attributes
 	/*
-	 *	Primary Attributes
+	 *	Vigor
 	 */
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Primary Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vigor, Category = "Primary Attributes")
+	FGameplayAttributeData Vigor;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Vigor);
+
+	/*
+	 *	Mind
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mind, Category = "Primary Attributes")
+	FGameplayAttributeData Mind;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Mind);
+
+	/*
+	 *	Endurance
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Endurance, Category = "Primary Attributes")
+	FGameplayAttributeData Endurance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Endurance);
+
+	/*
+	 *	Strength
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Primary Attributes")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Strength);
 
+	/*
+	 *	Dexterity
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Dexterity, Category = "Primary Attributes")
+	FGameplayAttributeData Dexterity;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Dexterity);
+
+	/*
+	 *	Intelligence
+	 */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Primary Attributes")
 	FGameplayAttributeData Intelligence;
 	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Intelligence);
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Primary Attributes")
+	/*
+	 *	Arkane
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Arkane, Category = "Primary Attributes")
+	FGameplayAttributeData Arkane;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Arkane);
+
+	/*
+	 *	Resilience
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Resilience, Category = "Primary Attributes")
 	FGameplayAttributeData Resilience;
 	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Resilience);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Primary Attributes")
-	FGameplayAttributeData Vigor;
-	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, Vigor);
 
 #pragma endregion
 
@@ -156,10 +193,15 @@ public:
 	UFUNCTION() void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
 	UFUNCTION() void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
 
-	UFUNCTION() void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
-	UFUNCTION() void OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const;
-	UFUNCTION() void OnRep_Resilience(const FGameplayAttributeData& OldResilience) const;
-	UFUNCTION() void OnRep_Vigor(const FGameplayAttributeData& OldVigor) const;
+
+	UFUNCTION() void OnRep_Vigor(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Mind(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Endurance(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Strength(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Dexterity(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Intelligence(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Arkane(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_Resilience(const FGameplayAttributeData& OldValue) const;
 
 private:
 

@@ -22,10 +22,15 @@ void URPG_AttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Stamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Strength, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Resilience, COND_None, REPNOTIFY_Always);
+
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Vigor, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Mind, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Endurance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Strength, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Dexterity, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Arkane, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Resilience, COND_None, REPNOTIFY_Always);
 
 
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Armor, COND_None, REPNOTIFY_Always);
@@ -151,24 +156,44 @@ void URPG_AttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxSta
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, MaxStamina, OldMaxStamina);
 }
 
-void URPG_AttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
+void URPG_AttributeSet::OnRep_Strength(const FGameplayAttributeData& OldValue) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Strength, OldStrength);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Strength, OldValue);
 }
 
-void URPG_AttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const
+void URPG_AttributeSet::OnRep_Intelligence(const FGameplayAttributeData& OldValue) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Intelligence, OldIntelligence);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Intelligence, OldValue);
 }
 
-void URPG_AttributeSet::OnRep_Resilience(const FGameplayAttributeData& OldResilience) const
+void URPG_AttributeSet::OnRep_Arkane(const FGameplayAttributeData& OldValue) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Resilience, OldResilience);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Arkane, OldValue);
 }
 
-void URPG_AttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
+void URPG_AttributeSet::OnRep_Resilience(const FGameplayAttributeData& OldValue) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Vigor, OldVigor);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Resilience, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Vigor, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_Mind(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Mind, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_Endurance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Endurance, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_Dexterity(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, Dexterity, OldValue);
 }
 
 void URPG_AttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor) const

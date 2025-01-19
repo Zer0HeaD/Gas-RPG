@@ -20,5 +20,5 @@ public:
 
 private:
 
-	FGameplayEffectAttributeCaptureDefinition StrengthDef;
+	FGameplayEffectAttributeCaptureDefinition EnduranceDef;
 };

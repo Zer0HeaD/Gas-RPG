@@ -7,11 +7,11 @@
 
 UMMC_MaxMana::UMMC_MaxMana()
 {
-	IntDef.AttributeToCapture = URPG_AttributeSet::GetIntelligenceAttribute();
-	IntDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
-	IntDef.bSnapshot = false;
+	MindDef.AttributeToCapture = URPG_AttributeSet::GetMindAttribute();
+	MindDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+	MindDef.bSnapshot = false;
 
-	RelevantAttributesToCapture.Add(IntDef);
+	RelevantAttributesToCapture.Add(MindDef);
 }
 
 float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
@@ -25,7 +25,7 @@ float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectS
 	EvaluationParams.TargetTags = TargetTags;
 
 	float intelligence = 0.f;
-	GetCapturedAttributeMagnitude(IntDef, Spec, EvaluationParams, intelligence);
+	GetCapturedAttributeMagnitude(MindDef, Spec, EvaluationParams, intelligence);
 	intelligence = FMath::Max<float>(intelligence, 0.f);
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());

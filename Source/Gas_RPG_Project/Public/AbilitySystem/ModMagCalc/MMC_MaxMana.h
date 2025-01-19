@@ -20,5 +20,5 @@ public:
 
 private:
 
-	FGameplayEffectAttributeCaptureDefinition IntDef;
+	FGameplayEffectAttributeCaptureDefinition MindDef;
 };

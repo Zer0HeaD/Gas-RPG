@@ -7,11 +7,11 @@
 
 UMMC_MaxStamina::UMMC_MaxStamina()
 {
-	StrengthDef.AttributeToCapture = URPG_AttributeSet::GetStrengthAttribute();
-	StrengthDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
-	StrengthDef.bSnapshot = false;
+	EnduranceDef.AttributeToCapture = URPG_AttributeSet::GetEnduranceAttribute();
+	EnduranceDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+	EnduranceDef.bSnapshot = false;
 
-	RelevantAttributesToCapture.Add(StrengthDef);
+	RelevantAttributesToCapture.Add(EnduranceDef);
 }
 
 float UMMC_MaxStamina::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
@@ -25,7 +25,7 @@ float UMMC_MaxStamina::CalculateBaseMagnitude_Implementation(const FGameplayEffe
 	EvaluationParams.TargetTags = TargetTags;
 
 	float Strength = 0.f;
-	GetCapturedAttributeMagnitude(StrengthDef, Spec, EvaluationParams, Strength);
+	GetCapturedAttributeMagnitude(EnduranceDef, Spec, EvaluationParams, Strength);
 	Strength = FMath::Max<float>(Strength, 0.f);
 
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
