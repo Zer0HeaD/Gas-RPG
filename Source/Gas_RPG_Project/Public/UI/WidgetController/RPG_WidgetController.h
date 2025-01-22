@@ -49,7 +49,7 @@ class GAS_RPG_PROJECT_API URPG_WidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
-	virtual void BroadcastInitialValues();
+	UFUNCTION(BlueprintCallable) virtual void BroadcastInitialValues();
 	virtual void BindCallbacksToDependencies();
 
 

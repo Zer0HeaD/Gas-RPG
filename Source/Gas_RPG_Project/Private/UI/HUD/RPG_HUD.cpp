@@ -5,6 +5,7 @@
 
 #include "UI/Widgets/RPG_UserWidget.h"
 #include "UI/WidgetController/RPG_OverlayWidgetController.h"
+#include "UI/WidgetController/AttributeMenuWidgetController.h"
 
 URPG_OverlayWidgetController* ARPG_HUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
@@ -17,6 +18,19 @@ URPG_OverlayWidgetController* ARPG_HUD::GetOverlayWidgetController(const FWidget
 		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
+}
+
+UAttributeMenuWidgetController* ARPG_HUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (!AttributeMenuWidgetController)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
+		AttributeMenuWidgetController->BindCallbacksToDependencies();
+
+		return AttributeMenuWidgetController;
+	}
+	return AttributeMenuWidgetController;
 }
 
 void ARPG_HUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)

@@ -26,14 +26,14 @@ public:
 	FGameplayTag Attributes_Secondary_Mana;
 	FGameplayTag Attributes_Secondary_Stamina;
 
-	FGameplayTag Attributes_Secondary_Vigor;
-	FGameplayTag Attributes_Secondary_Mind;
-	FGameplayTag Attributes_Secondary_Endurance;
-	FGameplayTag Attributes_Secondary_Strength;
-	FGameplayTag Attributes_Secondary_Dexterity;
-	FGameplayTag Attributes_Secondary_Intelligence;
-	FGameplayTag Attributes_Secondary_Arkane;
-	FGameplayTag Attributes_Secondary_Resilience;
+	FGameplayTag Attributes_Primary_Vigor;
+	FGameplayTag Attributes_Primary_Mind;
+	FGameplayTag Attributes_Primary_Endurance;
+	FGameplayTag Attributes_Primary_Strength;
+	FGameplayTag Attributes_Primary_Dexterity;
+	FGameplayTag Attributes_Primary_Intelligence;
+	FGameplayTag Attributes_Primary_Arkane;
+	FGameplayTag Attributes_Primary_Resilience;
 
 
 	FGameplayTag Attributes_Secondary_Armor;
