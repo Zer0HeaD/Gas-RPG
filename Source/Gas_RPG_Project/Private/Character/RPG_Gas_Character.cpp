@@ -3,7 +3,7 @@
 
 #include "Character/RPG_Gas_Character.h"
 #include "InputActionValue.h"
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/RPG_AbilitySystemComponent.h"
 #include "Player/RPG_PlayerController.h"
 
 // Sets default values
@@ -53,6 +53,15 @@ void ARPG_Gas_Character::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+}
+
+// EXECUTE ONLY ON A SERVER
+void ARPG_Gas_Character::AddCharacterAbilities()
+{
+	URPG_AbilitySystemComponent* ASC = CastChecked<URPG_AbilitySystemComponent>(AbilitySystemComponent);
+	if (!HasAuthority()) return;
+
+	ASC->AddCharacterAbilities(StartupAbilities);
 }
 
 

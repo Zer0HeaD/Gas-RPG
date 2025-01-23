@@ -24,6 +24,7 @@ void ARPG_Player_Character::PossessedBy(AController* NewController)
 
 	// Init ability actor info for the server
 	InitAbilityActorInfo();
+	AddCharacterAbilities();
 }
 
 void ARPG_Player_Character::OnRep_PlayerState()
