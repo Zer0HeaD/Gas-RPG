@@ -37,6 +37,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Combat") TObjectPtr<UStaticMeshComponent> Weapon;
 
+	UPROPERTY(EditAnywhere, Category = "Combat") FName WeaponTipSocketName;
+
+	virtual FVector GetCombatSocketLocation() override;
+
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
 	void InitializeDefaultAttributes() const;

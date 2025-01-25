@@ -36,6 +36,12 @@ void ARPG_Gas_Character::InitAbilityActorInfo()
 
 
 
+FVector ARPG_Gas_Character::GetCombatSocketLocation()
+{
+	check(Weapon);
+	return 	GetMesh()->GetSocketLocation(WeaponTipSocketName);
+}
+
 void ARPG_Gas_Character::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
 	check(IsValid(GetAbilitySystemComponent()));
