@@ -2,7 +2,6 @@
 
 
 #include "Character/RPG_Player_Character.h"
-#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
 #include "Player/RPG_PlayerState.h"
@@ -12,6 +11,8 @@
 #include <Player/RPG_PlayerController.h>
 #include "UI/HUD/RPG_HUD.h"
 #include "UI/Widgets/RPG_UserWidget.h"
+#include <Input/RPGInputComponent.h>
+#include <AbilitySystemBlueprintLibrary.h>
 
 ARPG_Player_Character::ARPG_Player_Character()
 {
@@ -65,6 +66,37 @@ void ARPG_Player_Character::InitAbilityActorInfo()
 	InitializeDefaultAttributes();
 }
 
+URPG_AbilitySystemComponent* ARPG_Player_Character::GetRPG_ASC()
+{
+	if(!AbilitySystemComponent) return nullptr;
+
+	if (!RPGAbilitySystemComponent)
+	{
+		RPGAbilitySystemComponent = Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent);
+		/*UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(this)*/
+	}
+	return RPGAbilitySystemComponent;
+}
+
+void ARPG_Player_Character::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	check(AbilitySystemComponent);
+
+	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+}
+
+void ARPG_Player_Character::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (!GetRPG_ASC()) return;
+	GetRPG_ASC()->AbilityInputTagReleased(InputTag);
+}
+
+void ARPG_Player_Character::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if (!GetRPG_ASC()) return;
+	GetRPG_ASC()->AbilityInputTagHeld(InputTag);
+}
+
 void ARPG_Player_Character::BeginPlay()
 {
 	Super::BeginPlay();
@@ -87,20 +119,27 @@ void ARPG_Player_Character::NotifyControllerChanged()
 void ARPG_Player_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	if (URPGInputComponent* RPGInputComponent = CastChecked<URPGInputComponent>(PlayerInputComponent))
 	{
 
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		RPGInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		RPGInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Move);
+		RPGInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Look);
+		RPGInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Look);
 
-		EnhancedInputComponent->BindAction(MenuAction, ETriggerEvent::Started, this, &ARPG_Player_Character::OpenMenu);
+		RPGInputComponent->BindAction(MenuAction, ETriggerEvent::Started, this, &ARPG_Player_Character::OpenMenu);
+
+		RPGInputComponent->BindAbilityActions(
+			InputConfig, 
+			this, 
+			&ThisClass::AbilityInputTagPressed, 
+			&ThisClass::AbilityInputTagReleased, 
+			&ThisClass::AbilityInputTagHeld);
 	}
 	else
 	{

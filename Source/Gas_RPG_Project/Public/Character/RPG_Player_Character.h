@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "Character/RPG_Gas_Character.h"
 #include "UI/Widgets/RPG_UserWidget.h"
+#include "GameplayTagContainer.h"
+#include <AbilitySystem/RPG_AbilitySystemComponent.h>
 #include "RPG_Player_Character.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class URPG_InputConfig;
 /**
  * 
  */
@@ -73,6 +76,16 @@ protected:
 
 private:
 	void InitAbilityActorInfo() override;
+
+	URPG_AbilitySystemComponent* GetRPG_ASC();
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input") TObjectPtr<URPG_InputConfig> InputConfig;
+
+	UPROPERTY() TObjectPtr<URPG_AbilitySystemComponent> RPGAbilitySystemComponent;
 
 public:
 

@@ -14,4 +14,7 @@ class GAS_RPG_PROJECT_API URPG_GameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 	
+public:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input") FGameplayTag StartupInputTag;
 };

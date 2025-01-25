@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/RPG_AbilitySystemComponent.h"
 #include "RPG_GameplayTags.h"
+#include <AbilitySystem/Abilities/RPG_GameplayAbility.h>
 
 void URPG_AbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -17,11 +18,46 @@ void URPG_AbilitySystemComponent::AbilityActorInfoSet()
 
 void URPG_AbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
 {
-	for (TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
-		//GiveAbility(AbilitySpec);
-		GiveAbilityAndActivateOnce(AbilitySpec);
+		if (const URPG_GameplayAbility* RPGAbility = Cast<URPG_GameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.GetDynamicSpecSourceTags().AddTag(RPGAbility->StartupInputTag);
+			GiveAbility(AbilitySpec);
+			/// to check if ability working - we active it on start
+			//GiveAbilityAndActivateOnce(AbilitySpec);
+		}
+	}
+}
+
+void URPG_AbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (auto& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
+		{
+			AbilitySpecInputPressed(AbilitySpec);
+			if (!AbilitySpec.IsActive())
+			{
+				TryActivateAbility(AbilitySpec.Handle);
+			}
+		}
+	}
+}
+
+void URPG_AbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (auto& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
+		{
+			AbilitySpecInputReleased(AbilitySpec);
+		}
 	}
 }
 

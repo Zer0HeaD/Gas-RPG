@@ -46,6 +46,18 @@ public:
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	FGameplayTag Attributes_Secondary_StaminaRegeneration;
 
+
+	FGameplayTag InputTag_RegularAttack;
+	FGameplayTag InputTag_SpecialAttack;
+
+	FGameplayTag InputTag_ActiveAbility_1;
+	FGameplayTag InputTag_ActiveAbility_2;
+
+	FGameplayTag InputTag_BlockParry;
+
+	FGameplayTag InputTag_UltimateAbility;
+	FGameplayTag InputTag_SpecialAbility;
+
 protected:
 
 private:

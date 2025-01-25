@@ -72,4 +72,30 @@ void FRPG_GameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_StaminaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.StaminaRegeneration"),
 		FString("improve StaminaRegeneration"));
+
+	// INPUT TAGS
+	GameplayTags.InputTag_RegularAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.RegularAttack"),
+		FString("InputTag for regular attack: LMB or RB"));
+	GameplayTags.InputTag_SpecialAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.SpecialAttack"),
+		FString("InputTag for Special attack: RMB or RT"));
+
+	GameplayTags.InputTag_ActiveAbility_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.ActiveAbility_1"),
+		FString("InputTag for Active Ability: LMB with Q hold or RB with LB hold"));
+	GameplayTags.InputTag_ActiveAbility_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.ActiveAbility_2"),
+		FString("InputTag for Active Ability: RMB with Q hold or RT with LB hold"));
+
+	GameplayTags.InputTag_BlockParry = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.BlockParry"),
+		FString("InputTag for Block/Parry: Q for parry, Q hold for block"));
+
+	GameplayTags.InputTag_UltimateAbility = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.UltimateAbility"),
+		FString("InputTag for Ultimate Ability: MMB or LB + RB"));
+	GameplayTags.InputTag_SpecialAbility = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.SpecialAbility"),
+		FString("InputTag for Special Ability: R or LT"));
 }
