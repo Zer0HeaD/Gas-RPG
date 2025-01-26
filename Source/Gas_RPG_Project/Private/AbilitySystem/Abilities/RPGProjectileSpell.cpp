@@ -35,7 +35,7 @@ void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
 			ProjectileClass,
 			SpawnTransform,
 			GetOwningActorFromActorInfo(),
-			Cast<APawn>(GetOwningActorFromActorInfo()),
+			Cast<APawn>(GetAvatarActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		//TODO: give a projectile a gameplay effect spec for causing damage!

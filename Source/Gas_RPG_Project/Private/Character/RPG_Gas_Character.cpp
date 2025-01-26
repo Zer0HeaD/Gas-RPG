@@ -5,6 +5,7 @@
 #include "InputActionValue.h"
 #include "AbilitySystem/RPG_AbilitySystemComponent.h"
 #include "Player/RPG_PlayerController.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 ARPG_Gas_Character::ARPG_Gas_Character()
@@ -12,11 +13,12 @@ ARPG_Gas_Character::ARPG_Gas_Character()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("Greystone_Sword_Socket"));
 
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	//GetMesh()->VisibilityBasedAnimTickOption(EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones);
 }
 
 UAbilitySystemComponent* ARPG_Gas_Character::GetAbilitySystemComponent() const
