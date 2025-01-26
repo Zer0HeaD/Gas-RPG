@@ -34,12 +34,15 @@ void ARPG_Gas_Character::InitAbilityActorInfo()
 {
 }
 
-
-
 FVector ARPG_Gas_Character::GetCombatSocketLocation()
 {
 	check(Weapon);
 	return 	GetMesh()->GetSocketLocation(WeaponTipSocketName);
+}
+
+FRotator ARPG_Gas_Character::GetOwnerRotation()
+{
+	return bUseControllerRotationYaw ? GetControlRotation() : GetActorRotation();
 }
 
 void ARPG_Gas_Character::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
@@ -50,7 +53,7 @@ void ARPG_Gas_Character::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> Gameplay
 	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 	ContextHandle.AddSourceObject(this);
 	const FGameplayEffectSpecHandle SpecHandle =
-		GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
+	GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), GetAbilitySystemComponent());
 }
 

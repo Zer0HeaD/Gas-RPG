@@ -15,7 +15,7 @@ void URPGProjectileSpell::ActivateAbility(
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void URPGProjectileSpell::SpawnProjectile()
+void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -23,11 +23,13 @@ void URPGProjectileSpell::SpawnProjectile()
 	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		FRotator Rotation = CombatInterface->GetOwnerRotation();
+		//TODO: FOR GRAVITY PROJECTILE SET PITCH TO 25.F LATER
+		Rotation.Pitch = ProjectileRotationPitchModifier;
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
-
-		//TODO: set projectile rotation!
+		SpawnTransform.SetRotation(Rotation.Quaternion());
 
 		ARPG_Projectile* Projectile = GetWorld()->SpawnActorDeferred<ARPG_Projectile>(
 			ProjectileClass,

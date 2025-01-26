@@ -40,6 +40,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat") FName WeaponTipSocketName;
 
 	virtual FVector GetCombatSocketLocation() override;
+	virtual FRotator GetOwnerRotation() override;
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 

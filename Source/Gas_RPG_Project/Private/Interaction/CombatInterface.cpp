@@ -14,3 +14,8 @@ FVector ICombatInterface::GetCombatSocketLocation()
 {
     return FVector();
 }
+
+FRotator ICombatInterface::GetOwnerRotation()
+{
+    return FRotator();
+}
