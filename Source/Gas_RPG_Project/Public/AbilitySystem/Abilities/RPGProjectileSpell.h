@@ -7,6 +7,7 @@
 #include "Actor/RPG_Projectile.h"
 #include "RPGProjectileSpell.generated.h"
 
+class UGameplayEffect;
 /**
  * 
  */
@@ -27,4 +28,5 @@ protected:
 	void SpawnProjectile(float ProjectileRotationPitchModifier = 0.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<ARPG_Projectile> ProjectileClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

@@ -4,6 +4,8 @@
 #include "AbilitySystem/Abilities/RPGProjectileSpell.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include <Interaction/CombatInterface.h>
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 
 
 void URPGProjectileSpell::ActivateAbility(
@@ -24,7 +26,6 @@ void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 		FRotator Rotation = CombatInterface->GetOwnerRotation();
-		//TODO: FOR GRAVITY PROJECTILE SET PITCH TO 25.F LATER
 		Rotation.Pitch = ProjectileRotationPitchModifier;
 
 		FTransform SpawnTransform;
@@ -38,7 +39,13 @@ void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
 			Cast<APawn>(GetAvatarActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		//TODO: give a projectile a gameplay effect spec for causing damage!
+		const UAbilitySystemComponent* Source_ASC = 
+			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+
+		check(DamageEffectClass);
+		const FGameplayEffectSpecHandle SpecHandle =
+			Source_ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), Source_ASC->MakeEffectContext());
+		Projectile->DamageEffectSpecHandle = SpecHandle;
 
 		Projectile->FinishSpawning(SpawnTransform);
 	}

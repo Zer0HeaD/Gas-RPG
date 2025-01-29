@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameplayEffectTypes.h"
 #include "RPG_Projectile.generated.h"
 
 class USphereComponent;
@@ -21,6 +22,8 @@ public:
 	ARPG_Projectile();
 
 	UPROPERTY(VisibleAnywhere) TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
+
+	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true)) FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
 protected:
 	// Called when the game starts or when spawned
