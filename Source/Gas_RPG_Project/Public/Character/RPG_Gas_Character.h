@@ -35,7 +35,7 @@ protected:
 
 	virtual void InitAbilityActorInfo();
 
-	UPROPERTY(EditAnywhere, Category = "Combat") TObjectPtr<UStaticMeshComponent> Weapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat") TObjectPtr<UStaticMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category = "Combat") FName WeaponTipSocketName;
 
@@ -44,7 +44,7 @@ protected:
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
-	void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributes() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes") 
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;

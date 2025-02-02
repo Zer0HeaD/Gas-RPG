@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Data/CharacterClassInfo.h"
 #include "RPG_AbilitySystemLibrary.generated.h"
 
 class URPG_OverlayWidgetController;
 class UAttributeMenuWidgetController;
+class UAbilitySystemComponent;
 /**
  * 
  */
@@ -23,4 +25,11 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "RPG_AbilitySystemLibrary|WidgetController")
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|CharacterClassDefaults")
+	static void InitializeDefultAttributes(
+		const UObject* WorldContextObject, 
+		ECharacterClass CharacterClass, 
+		float Level,
+		UAbilitySystemComponent* ASC);
 };

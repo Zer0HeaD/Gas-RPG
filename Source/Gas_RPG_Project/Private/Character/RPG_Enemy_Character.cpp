@@ -5,6 +5,7 @@
 #include <AbilitySystem/RPG_AbilitySystemComponent.h>
 #include <AbilitySystem/RPG_AttributeSet.h>
 #include "Components/WidgetComponent.h"
+#include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 
 ARPG_Enemy_Character::ARPG_Enemy_Character()
 {
@@ -39,6 +40,11 @@ void ARPG_Enemy_Character::InitAbilityActorInfo()
 	Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 	InitializeDefaultAttributes();
+}
+
+void ARPG_Enemy_Character::InitializeDefaultAttributes() const
+{
+	URPG_AbilitySystemLibrary::InitializeDefultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 
 void ARPG_Enemy_Character::BindDelegates()
