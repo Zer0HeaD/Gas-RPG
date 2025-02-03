@@ -29,6 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") int32 Level = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") 
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") float KnockbackImpulseForce = 500.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<UWidgetComponent> InfoWidget;
 
 public:

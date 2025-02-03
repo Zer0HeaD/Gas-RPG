@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "RPG_PlayerController.generated.h"
 
+class UDamageTextComponent;
 /**
  * 
  */
@@ -17,8 +18,12 @@ class GAS_RPG_PROJECT_API ARPG_PlayerController : public APlayerController
 public:
 	ARPG_PlayerController();
 
+	UFUNCTION(Client, Reliable) void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };

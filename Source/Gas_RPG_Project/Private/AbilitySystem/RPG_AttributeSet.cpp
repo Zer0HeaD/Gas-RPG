@@ -8,6 +8,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "RPG_GameplayTags.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/RPG_PlayerController.h"
 
 URPG_AttributeSet::URPG_AttributeSet()
 {
@@ -135,6 +137,7 @@ void URPG_AttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 	}
 }
 
+
 void URPG_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -185,6 +188,20 @@ void URPG_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				TagContainer_Heavy.AddTag(FRPG_GameplayTags::Get().Effects_HeavyHitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer_Heavy);
 			}
+
+			ShowFloatingText(Props, local_incomingDamage);
+		}
+	}
+}
+
+void URPG_AttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (ARPG_PlayerController* RPG_PC =
+			Cast<ARPG_PlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			RPG_PC->ShowDamageNumber(Damage, Props.TargetCharacter);
 		}
 	}
 }

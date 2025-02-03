@@ -37,4 +37,7 @@ public:
 	static void GiveStartupAbilities(
 		const UObject* WorldContextObject,
 		UAbilitySystemComponent* ASC);
+
+	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|CharacterClassDefaults")
+	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
 };

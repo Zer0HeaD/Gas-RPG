@@ -8,6 +8,7 @@
 #include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 #include "RPG_GameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ARPG_Enemy_Character::ARPG_Enemy_Character()
 {
@@ -98,6 +99,26 @@ void ARPG_Enemy_Character::HitReactTagChanged(const FGameplayTag CallbackTag, in
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? HitWalkSpeed : BaseWalkSpeed;
+
+	if (bHitReacting)
+	{
+		//TODO: create more efficient code to rotate enemy, current code works only in singleplayer
+		if (APawn* player = UGameplayStatics::GetPlayerPawn(this, 0))
+		{
+			FVector PlayerDirection = (player->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+			PlayerDirection.Z = 0.f;
+			FRotator TargetRotation = PlayerDirection.Rotation();
+			TargetRotation.Pitch = 0.f;
+			TargetRotation.Roll = 0.f;
+			SetActorRotation(TargetRotation);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Red, FString("FAILED TO GET A PLAYER PAWN FOR ROTATION ENEMY TO PLAYER"));
+		}
+
+		LaunchCharacter(-GetActorForwardVector() * KnockbackImpulseForce, true, false);
+	}
 }
 
 void ARPG_Enemy_Character::HeavyHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)

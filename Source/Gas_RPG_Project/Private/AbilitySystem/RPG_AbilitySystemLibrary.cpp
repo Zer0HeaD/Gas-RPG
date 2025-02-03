@@ -49,48 +49,54 @@ void URPG_AbilitySystemLibrary::InitializeDefultAttributes(
 	float Level,
 	UAbilitySystemComponent* ASC)
 {
-	if (ARPG_GameModeBase* RPG_GM = Cast<ARPG_GameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject)))
-	{
-		AActor* AvatarActor = ASC->GetAvatarActor();
+	AActor* AvatarActor = ASC->GetAvatarActor();
 
-		UCharacterClassInfo* CharacterClassInfo = RPG_GM->CharacterClassInfo;
-		check(CharacterClassInfo);
-		FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	check(CharacterClassInfo);
+	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 
-		// APPLY PRIMARY ATTRIBUTES IN GM
-		FGameplayEffectContextHandle PrimaryAttributesContextHandle = ASC->MakeEffectContext();
-		PrimaryAttributesContextHandle.AddSourceObject(AvatarActor);
-		const FGameplayEffectSpecHandle PrimaryAttributesSpecHandle = 
-			ASC->MakeOutgoingSpec(ClassDefaultInfo.PrimaryAttributes, Level, PrimaryAttributesContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*PrimaryAttributesSpecHandle.Data.Get());
+	// APPLY PRIMARY ATTRIBUTES IN GM
+	FGameplayEffectContextHandle PrimaryAttributesContextHandle = ASC->MakeEffectContext();
+	PrimaryAttributesContextHandle.AddSourceObject(AvatarActor);
+	const FGameplayEffectSpecHandle PrimaryAttributesSpecHandle =
+		ASC->MakeOutgoingSpec(ClassDefaultInfo.PrimaryAttributes, Level, PrimaryAttributesContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*PrimaryAttributesSpecHandle.Data.Get());
 
-		// APPLY SECONDARY ATTRIBUTES IN GM
-		FGameplayEffectContextHandle SecondaryAttributesContextHandle = ASC->MakeEffectContext();
-		SecondaryAttributesContextHandle.AddSourceObject(AvatarActor);
-		const FGameplayEffectSpecHandle SecondaryAttributesSpecHandle =
-			ASC->MakeOutgoingSpec(CharacterClassInfo->SecondaryAttributes, Level, SecondaryAttributesContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributesSpecHandle.Data.Get());
+	// APPLY SECONDARY ATTRIBUTES IN GM
+	FGameplayEffectContextHandle SecondaryAttributesContextHandle = ASC->MakeEffectContext();
+	SecondaryAttributesContextHandle.AddSourceObject(AvatarActor);
+	const FGameplayEffectSpecHandle SecondaryAttributesSpecHandle =
+		ASC->MakeOutgoingSpec(CharacterClassInfo->SecondaryAttributes, Level, SecondaryAttributesContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributesSpecHandle.Data.Get());
 
-		// APPLY VITAL ATTRIBUTES IN GM
-		FGameplayEffectContextHandle VitalAttributesContextHandle = ASC->MakeEffectContext();
-		VitalAttributesContextHandle.AddSourceObject(AvatarActor);
-		const FGameplayEffectSpecHandle VitalAttributesSpecHandle =
-			ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttributes, Level, VitalAttributesContextHandle);
-		ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
-	}
+	// APPLY VITAL ATTRIBUTES IN GM
+	FGameplayEffectContextHandle VitalAttributesContextHandle = ASC->MakeEffectContext();
+	VitalAttributesContextHandle.AddSourceObject(AvatarActor);
+	const FGameplayEffectSpecHandle VitalAttributesSpecHandle =
+		ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttributes, Level, VitalAttributesContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }
 
 void URPG_AbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
 {
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	check(CharacterClassInfo);
+
+	for (auto AbilityClass : CharacterClassInfo->CommonAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		ASC->GiveAbility(AbilitySpec);
+	}
+}
+
+UCharacterClassInfo* URPG_AbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+{
 	if (ARPG_GameModeBase* RPG_GM = Cast<ARPG_GameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject)))
 	{
-		UCharacterClassInfo* CharacterClassInfo = RPG_GM->CharacterClassInfo;
-		check(CharacterClassInfo);
-
-		for (auto AbilityClass : CharacterClassInfo->CommonAbilities)
-		{
-			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
-			ASC->GiveAbility(AbilitySpec);
-		}
+		return RPG_GM->CharacterClassInfo;
+	}
+	else
+	{
+		return nullptr;
 	}
 }
