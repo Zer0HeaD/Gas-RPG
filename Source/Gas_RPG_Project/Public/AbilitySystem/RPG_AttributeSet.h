@@ -183,6 +183,15 @@ public:
 
 #pragma endregion
 
+
+#pragma region Meta Attributes
+
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, IncomingDamage);
+
+#pragma endregion
+
 	UFUNCTION() void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
 	UFUNCTION() void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
 	UFUNCTION() void OnRep_BlockChance(const FGameplayAttributeData& OldBlockChance) const;

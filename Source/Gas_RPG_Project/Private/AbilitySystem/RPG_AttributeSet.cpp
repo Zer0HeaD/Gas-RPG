@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "RPG_GameplayTags.h"
+#include "Interaction/CombatInterface.h"
 
 URPG_AttributeSet::URPG_AttributeSet()
 {
@@ -155,6 +156,36 @@ void URPG_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
 		SetStamina(FMath::Clamp(GetStamina(), 0.f, GetMaxStamina()));
+	}
+
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float local_incomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (local_incomingDamage > 0.f)
+		{
+			const float newHealth = GetHealth() - local_incomingDamage;
+			SetHealth(FMath::Clamp(newHealth, 0.f, GetMaxHealth()));
+
+			const bool bFail = newHealth <= 0.f;
+			if (bFail)
+			{
+				if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
+			{
+				FGameplayTagContainer TagContainer_Light;
+				TagContainer_Light.AddTag(FRPG_GameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer_Light);
+
+				FGameplayTagContainer TagContainer_Heavy;
+				TagContainer_Heavy.AddTag(FRPG_GameplayTags::Get().Effects_HeavyHitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer_Heavy);
+			}
+		}
 	}
 }
 

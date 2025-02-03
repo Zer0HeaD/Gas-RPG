@@ -6,6 +6,8 @@
 #include <AbilitySystem/RPG_AttributeSet.h>
 #include "Components/WidgetComponent.h"
 #include "AbilitySystem/RPG_AbilitySystemLibrary.h"
+#include "RPG_GameplayTags.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ARPG_Enemy_Character::ARPG_Enemy_Character()
 {
@@ -22,8 +24,8 @@ ARPG_Enemy_Character::ARPG_Enemy_Character()
 void ARPG_Enemy_Character::BeginPlay()
 {
 	Super::BeginPlay();
-
 	InitAbilityActorInfo();
+	URPG_AbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
 
 	if (URPG_UserWidget* RPG_UserWidget = Cast<URPG_UserWidget>(InfoWidget->GetUserWidgetObject()))
 	{
@@ -65,6 +67,16 @@ void ARPG_Enemy_Character::BindDelegates()
 			}
 		);
 
+		AbilitySystemComponent->RegisterGameplayTagEvent(
+			FRPG_GameplayTags::Get().Effects_HitReact, 
+			EGameplayTagEventType::NewOrRemoved).AddUObject(
+				this, &ARPG_Enemy_Character::HitReactTagChanged);
+
+		AbilitySystemComponent->RegisterGameplayTagEvent(
+			FRPG_GameplayTags::Get().Effects_HeavyHitReact,
+			EGameplayTagEventType::NewOrRemoved).AddUObject(
+				this, &ARPG_Enemy_Character::HeavyHitReactTagChanged);
+
 		OnHealthChanged.Broadcast(RPG_AS->GetHealth());
 		OnMaxHealthChanged.Broadcast(RPG_AS->GetMaxHealth());
 	}
@@ -73,4 +85,23 @@ void ARPG_Enemy_Character::BindDelegates()
 int32 ARPG_Enemy_Character::GetPlayerLevel()
 {
 	return Level;
+}
+
+void ARPG_Enemy_Character::Die()
+{
+	//TODO: we can set lifespan to delete enemy from world with dessolving, or leave it in ragdoll.
+	SetLifeSpan(LifeSpan);
+	Super::Die();
+}
+
+void ARPG_Enemy_Character::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? HitWalkSpeed : BaseWalkSpeed;
+}
+
+void ARPG_Enemy_Character::HeavyHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->StopMovementImmediately();
 }

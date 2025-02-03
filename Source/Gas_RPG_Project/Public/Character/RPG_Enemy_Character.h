@@ -34,10 +34,18 @@ protected:
 public:
 
 #pragma region Combat Interface
-
 	virtual int32 GetPlayerLevel() override;
-
+	virtual void Die() override;
 #pragma endregion
+
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	void HeavyHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat") bool bHitReacting;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") float LifeSpan = 5.f;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement") float HitWalkSpeed = 250.f;
+	UPROPERTY(BlueprintReadOnly, Category = "Movement") float BaseWalkSpeed = 450.f;
+
 
 	UPROPERTY(BlueprintAssignable) FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable) FOnAttributeChangedSignature OnMaxHealthChanged;

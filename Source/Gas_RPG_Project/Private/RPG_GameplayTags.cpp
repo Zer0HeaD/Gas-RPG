@@ -98,4 +98,16 @@ void FRPG_GameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.InputTag_SpecialAbility = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.SpecialAbility"),
 		FString("InputTag for Special Ability: R or LT"));
+
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage"),
+		FString("Damage"));
+
+	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Effects.HitReact"),
+		FString("Tag granted when hit reacting"));
+
+	GameplayTags.Effects_HeavyHitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Effects.HeavyHitReact"),
+		FString("Tag granted when hit reacting on heavy weapon/on stun"));
 }

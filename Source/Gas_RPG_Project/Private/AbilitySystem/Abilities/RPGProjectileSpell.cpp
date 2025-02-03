@@ -6,6 +6,7 @@
 #include <Interaction/CombatInterface.h>
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "RPG_GameplayTags.h"
 
 
 void URPGProjectileSpell::ActivateAbility(
@@ -45,6 +46,11 @@ void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
 		check(DamageEffectClass);
 		const FGameplayEffectSpecHandle SpecHandle =
 			Source_ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), Source_ASC->MakeEffectContext());
+
+		FRPG_GameplayTags GameplayTags = FRPG_GameplayTags::Get();
+		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
+
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 
 		Projectile->FinishSpawning(SpawnTransform);

@@ -6,6 +6,7 @@
 #include "AbilitySystem/RPG_AbilitySystemComponent.h"
 #include "Player/RPG_PlayerController.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ARPG_Gas_Character::ARPG_Gas_Character()
@@ -24,6 +25,31 @@ ARPG_Gas_Character::ARPG_Gas_Character()
 UAbilitySystemComponent* ARPG_Gas_Character::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+UAnimMontage* ARPG_Gas_Character::GetHitReactMontage_Implementation()
+{
+	check(HitReactMontage);
+	return HitReactMontage;
+}
+
+void ARPG_Gas_Character::Die()
+{
+	//TODO: DROP WEAPON ON DEATH
+	MulticastHandleDeath();
+}
+
+void ARPG_Gas_Character::MulticastHandleDeath_Implementation()
+{
+	//TODO: Simulate physics of weapon
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	Dissolve();
 }
 
 // Called when the game starts or when spawned
@@ -73,6 +99,31 @@ void ARPG_Gas_Character::AddCharacterAbilities()
 	if (!HasAuthority()) return;
 
 	ASC->AddCharacterAbilities(StartupAbilities);
+}
+
+void ARPG_Gas_Character::Dissolve()
+{
+	/*if (IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		for (int index = 0; index < GetMesh()->GetNumMaterials(); ++index)
+		{
+			GetMesh()->SetMaterial(index, DynamicMatInst);
+			StartDissolveTimeline(DynamicMatInst);
+		}
+	}*/
+	// AT THIS POINT WE USE MATERIAL FUNCTION WHICH ALREADY IN CHARACTER MATERIAL
+	//for (int index = 0; index < GetMesh()->GetNumMaterials(); ++index)
+	{
+		StartDissolveTimeline();
+	}
+
+	//TODO: Dissolve weapon material. Some weapons skeletal meshses, some static, still don't know which gonna in final project
+	/*if (IsValid(WeaponDissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, DynamicMatInst);
+	}*/
 }
 
 

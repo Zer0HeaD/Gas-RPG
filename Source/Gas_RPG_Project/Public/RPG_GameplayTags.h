@@ -58,6 +58,10 @@ public:
 	FGameplayTag InputTag_UltimateAbility;
 	FGameplayTag InputTag_SpecialAbility;
 
+	FGameplayTag Damage;
+	FGameplayTag Effects_HitReact;
+	FGameplayTag Effects_HeavyHitReact;
+
 protected:
 
 private:
