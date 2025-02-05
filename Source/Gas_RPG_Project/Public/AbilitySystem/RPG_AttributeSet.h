@@ -97,6 +97,36 @@ public:
 	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, StaminaRegeneration);
 #pragma endregion
 
+#pragma region Secondary Attributes Resistances
+	/*
+	 *	Resistances
+	 */
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalResistance, Category = "Secondary Attributes")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, PhysicalResistance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Secondary Attributes")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, FireResistance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_LightingResistance, Category = "Secondary Attributes")
+	FGameplayAttributeData LightingResistance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, LightingResistance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_IceResistance, Category = "Secondary Attributes")
+	FGameplayAttributeData IceResistance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, IceResistance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_VoidResistance, Category = "Secondary Attributes")
+	FGameplayAttributeData VoidResistance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, VoidResistance);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BloodResistance, Category = "Secondary Attributes")
+	FGameplayAttributeData BloodResistance;
+	ATTRIBUTE_ACCESSORS(URPG_AttributeSet, BloodResistance);
+
+#pragma endregion
+
 #pragma region first attributes
 	/// ATTRIBUTES
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
@@ -202,6 +232,14 @@ public:
 	UFUNCTION() void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
 	UFUNCTION() void OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const;
 
+	UFUNCTION() void OnRep_PhysicalResistance(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_FireResistance(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_LightingResistance(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_IceResistance(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_VoidResistance(const FGameplayAttributeData& OldValue) const;
+	UFUNCTION() void OnRep_BloodResistance(const FGameplayAttributeData& OldValue) const;
+
+
 	UFUNCTION() void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 	UFUNCTION() void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
@@ -225,5 +263,5 @@ private:
 
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 
-	void ShowFloatingText(const FEffectProperties& Props, float Damage) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
 };

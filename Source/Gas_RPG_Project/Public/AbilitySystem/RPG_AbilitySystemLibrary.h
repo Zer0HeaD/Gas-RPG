@@ -10,6 +10,7 @@
 class URPG_OverlayWidgetController;
 class UAttributeMenuWidgetController;
 class UAbilitySystemComponent;
+struct FGameplayEffectContextHandle;
 /**
  * 
  */
@@ -40,4 +41,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category = "RPG_AbilitySystemLibrary|Gameplay Effects") 
+	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure, Category = "RPG_AbilitySystemLibrary|Gameplay Effects")
+	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|Gameplay Effects")
+	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit);
+
+	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|Gameplay Effects")
+	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
 };

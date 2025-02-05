@@ -8,6 +8,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 #include <Interaction/CombatInterface.h>
+#include "RPG_AbilityTypes.h"
 
 struct RPGDamageStatics
 {
@@ -18,6 +19,15 @@ struct RPGDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance)
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage)
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(LightingResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(IceResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(VoidResistance)
+	DECLARE_ATTRIBUTE_CAPTUREDEF(BloodResistance)
+
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
+
 	RPGDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, Armor, Target, false);
@@ -26,6 +36,28 @@ struct RPGDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, CriticalHitChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, CriticalHitResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, CriticalHitDamage, Source, false);
+
+		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, PhysicalResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, FireResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, LightingResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, IceResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, VoidResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(URPG_AttributeSet, BloodResistance, Target, false);
+
+		const FRPG_GameplayTags& Tags = FRPG_GameplayTags::Get();
+		TagsToCaptureDefs.Add(Tags.Attributes_Secondary_Armor, ArmorDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Secondary_BlockChance, BlockChanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Secondary_ArmorPenetration, ArmorPenetrationDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Secondary_CriticalHitChance, CriticalHitChanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Secondary_CriticalHitDamage, CriticalHitDamageDef);
+
+		TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Physical, PhysicalResistanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Fire, FireResistanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Lighting, LightingResistanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Ice, IceResistanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Void, VoidResistanceDef);
+		TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Blood, BloodResistanceDef);
 	}
 };
 
@@ -43,6 +75,13 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
+
+	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().LightingResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().IceResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().VoidResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().BloodResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(
@@ -67,7 +106,36 @@ void UExecCalc_Damage::Execute_Implementation(
 	EvaluationParams.TargetTags = TargetTag;
 
 	// Get Damage set By Caller Magnitude
-	float Damage = Spec.GetSetByCallerMagnitude(FRPG_GameplayTags::Get().Damage);
+	float Damage = 0.f;						//Spec.GetSetByCallerMagnitude(FRPG_GameplayTags::Get().Damage);
+	for (const auto& Pair : FRPG_GameplayTags::Get().DamageTypesToResistances)
+	{
+		// damage tag
+		const FGameplayTag DamageType = Pair.Key;
+		// resistance tag
+		const FGameplayTag ResistanceTag = Pair.Value;
+
+		// check if it's not out of bound
+		checkf(
+			RPGDamageStatics().TagsToCaptureDefs.Contains(ResistanceTag),
+			TEXT("TagsToCaptureDefs doesn't contain tag: [%s] in ExecCalc"), 
+			*ResistanceTag.ToString());
+		// get captureDef associated with resistance tag
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = RPGDamageStatics().TagsToCaptureDefs[ResistanceTag];
+
+		// get damage type value
+		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
+
+		// calc resistance value
+		float Resistance = 0.f;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParams, Resistance);
+		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
+
+		// modify output damage with resistance to it's type of damage (Resistance in a percent from 0 to 100)
+		DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+		
+		Damage += DamageTypeValue;
+	}
 
 	// Capture BlockChance on target, and determine if there was a successful block
 	float TargetBlockChance = 0.f;
@@ -77,7 +145,11 @@ void UExecCalc_Damage::Execute_Implementation(
 		TargetBlockChance);
 	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.f);
 
-	const bool bBlocked = FMath::RandRange(1, 100) < TargetBlockChance;
+	const bool bBlocked = FMath::RandRange(1, 10) < TargetBlockChance;
+
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	URPG_AbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
+
 	// if block, halve the damage.
 	Damage = bBlocked ? Damage * 0.5f : Damage;
 
@@ -112,24 +184,14 @@ void UExecCalc_Damage::Execute_Implementation(
 	Damage *= (100 - EffectiveArmor * EffectiveArmorCoefficient) / 100.f;
 
 	float SourceCriticalHitChance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		DamageStatics().CriticalHitChanceDef, 
-		EvaluationParams, 
-		SourceCriticalHitChance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParams, SourceCriticalHitChance);
 	SourceCriticalHitChance = FMath::Max<float>(SourceCriticalHitChance, 0.f);
 
 	float TargetCriticalHitResistance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		DamageStatics().CriticalHitResistanceDef,
-		EvaluationParams,
-		TargetCriticalHitResistance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitResistanceDef, EvaluationParams, TargetCriticalHitResistance);
 	TargetCriticalHitResistance = FMath::Max<float>(TargetCriticalHitResistance, 0.f);
-
 	float SourceCriticalHitDamage = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(
-		DamageStatics().CriticalHitDamageDef,
-		EvaluationParams,
-		SourceCriticalHitDamage);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitDamageDef, EvaluationParams, SourceCriticalHitDamage);
 	SourceCriticalHitDamage = FMath::Max<float>(SourceCriticalHitDamage, 0.f);
 
 	// Add EffectiveArmorCoefficient from curve table
@@ -139,7 +201,9 @@ void UExecCalc_Damage::Execute_Implementation(
 
 	// Critical hit resistance reduces critical hit chance by a certain percentage
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance * CriticalHitResistanceCoefficient;
-	const bool bCriticalHit = FMath::RandRange(1, 100) < EffectiveCriticalHitChance;
+	const bool bCriticalHit = FMath::RandRange(1, 5) < EffectiveCriticalHitChance;
+
+	URPG_AbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
 	// Double damage plus a bonus of critical hit
 	Damage = bCriticalHit ? Damage * 2.f + SourceCriticalHitDamage : Damage;

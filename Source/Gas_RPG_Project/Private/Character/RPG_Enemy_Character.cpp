@@ -26,7 +26,11 @@ void ARPG_Enemy_Character::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
-	URPG_AbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+
+	if (HasAuthority())
+	{
+		URPG_AbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	}
 
 	if (URPG_UserWidget* RPG_UserWidget = Cast<URPG_UserWidget>(InfoWidget->GetUserWidgetObject()))
 	{
@@ -42,7 +46,10 @@ void ARPG_Enemy_Character::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<URPG_AbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
-	InitializeDefaultAttributes();
+	if (HasAuthority())
+	{
+		InitializeDefaultAttributes();
+	}
 }
 
 void ARPG_Enemy_Character::InitializeDefaultAttributes() const

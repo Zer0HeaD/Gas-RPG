@@ -59,6 +59,23 @@ public:
 	FGameplayTag InputTag_SpecialAbility;
 
 	FGameplayTag Damage;
+	FGameplayTag Damage_Physical;
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Lighting;
+	FGameplayTag Damage_Ice;
+	FGameplayTag Damage_Void;
+	FGameplayTag Damage_Blood;
+
+	FGameplayTag Attributes_Resistance_Physical;
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lighting;
+	FGameplayTag Attributes_Resistance_Ice;
+	FGameplayTag Attributes_Resistance_Void;
+	FGameplayTag Attributes_Resistance_Blood;
+
+	TArray<FGameplayTag> DamageTypes;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+
 	FGameplayTag Effects_HitReact;
 	FGameplayTag Effects_HeavyHitReact;
 

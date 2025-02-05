@@ -10,6 +10,7 @@
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/RPG_PlayerController.h"
+#include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 
 URPG_AttributeSet::URPG_AttributeSet()
 {
@@ -43,6 +44,13 @@ URPG_AttributeSet::URPG_AttributeSet()
 
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxStamina, GetMaxStaminaAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_StaminaRegeneration, GetStaminaRegenerationAttribute);
+
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Fire, GetFireResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Lighting, GetLightingResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Ice, GetIceResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Void, GetVoidResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Blood, GetBloodResistanceAttribute);
 }
 
 void URPG_AttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -65,6 +73,13 @@ void URPG_AttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Arkane, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Resilience, COND_None, REPNOTIFY_Always);
+
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, FireResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, LightingResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, IceResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, VoidResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, BloodResistance, COND_None, REPNOTIFY_Always);
 
 
 	DOREPLIFETIME_CONDITION_NOTIFY(URPG_AttributeSet, Armor, COND_None, REPNOTIFY_Always);
@@ -189,19 +204,21 @@ void URPG_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer_Heavy);
 			}
 
-			ShowFloatingText(Props, local_incomingDamage);
+			const bool bBlock = URPG_AbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCriticalHit = URPG_AbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			ShowFloatingText(Props, local_incomingDamage, bBlock, bCriticalHit);
 		}
 	}
 }
 
-void URPG_AttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+void URPG_AttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
 		if (ARPG_PlayerController* RPG_PC =
-			Cast<ARPG_PlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+			Cast<ARPG_PlayerController>(Props.SourceCharacter->Controller)) /*UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)*/
 		{
-			RPG_PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+			RPG_PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
 	}
 }
@@ -319,4 +336,34 @@ void URPG_AttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& Old
 void URPG_AttributeSet::OnRep_StaminaRegeneration(const FGameplayAttributeData& OldStaminaRegeneration) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, StaminaRegeneration, OldStaminaRegeneration);
+}
+
+void URPG_AttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, PhysicalResistance, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_FireResistance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, FireResistance, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_LightingResistance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, LightingResistance, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_IceResistance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, IceResistance, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_VoidResistance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, VoidResistance, OldValue);
+}
+
+void URPG_AttributeSet::OnRep_BloodResistance(const FGameplayAttributeData& OldValue) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URPG_AttributeSet, BloodResistance, OldValue);
 }

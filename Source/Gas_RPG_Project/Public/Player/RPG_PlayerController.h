@@ -18,7 +18,7 @@ class GAS_RPG_PROJECT_API ARPG_PlayerController : public APlayerController
 public:
 	ARPG_PlayerController();
 
-	UFUNCTION(Client, Reliable) void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+	UFUNCTION(Client, Reliable) void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 
 protected:
 	virtual void BeginPlay() override;

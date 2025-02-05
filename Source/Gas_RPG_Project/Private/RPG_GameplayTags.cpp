@@ -103,6 +103,36 @@ void FRPG_GameplayTags::InitializeNativeGameplayTags()
 		FName("Damage"),
 		FString("Damage"));
 
+	GameplayTags.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Physical"),
+		FString("Physical Damage Type"));
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Physical);
+
+	GameplayTags.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Fire"),
+		FString("Fire Damage Type"));
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Fire);
+
+	GameplayTags.Damage_Lighting = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Lighting"),
+		FString("Lighting Damage Type"));
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Lighting);
+
+	GameplayTags.Damage_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Ice"),
+		FString("Ice Damage Type"));
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Ice);
+
+	GameplayTags.Damage_Void = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Void"),
+		FString("Void Damage Type"));
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Void);
+
+	GameplayTags.Damage_Blood = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Blood"),
+		FString("Blood Damage Type"));
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Blood);
+
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Effects.HitReact"),
 		FString("Tag granted when hit reacting"));
@@ -110,4 +140,35 @@ void FRPG_GameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Effects_HeavyHitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Effects.HeavyHitReact"),
 		FString("Tag granted when hit reacting on heavy weapon/on stun"));
+
+	// RESISTANCES
+	GameplayTags.Attributes_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Physical"),
+		FString("Physical Resistance Type"));
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
+
+	GameplayTags.Attributes_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Fire"),
+		FString("Fire Resistance Type"));
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Fire, GameplayTags.Attributes_Resistance_Fire);
+
+	GameplayTags.Attributes_Resistance_Lighting = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Lighting"),
+		FString("Lighting Resistance Type"));
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lighting, GameplayTags.Attributes_Resistance_Lighting);
+
+	GameplayTags.Attributes_Resistance_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Ice"),
+		FString("Ice Resistance Type"));
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Ice, GameplayTags.Attributes_Resistance_Ice);
+
+	GameplayTags.Attributes_Resistance_Void = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Void"),
+		FString("Void Resistance Type"));
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Void, GameplayTags.Attributes_Resistance_Void);
+
+	GameplayTags.Attributes_Resistance_Blood = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Blood"),
+		FString("Blood Resistance Type"));
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Blood, GameplayTags.Attributes_Resistance_Blood);
 }

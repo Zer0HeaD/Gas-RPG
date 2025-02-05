@@ -8,6 +8,7 @@
 #include "UI/WidgetController/RPG_WidgetController.h"
 #include "Game/RPG_GameModeBase.h"
 #include "AbilitySystem/RPG_AbilitySystemComponent.h"
+#include "RPG_AbilityTypes.h"
 
 URPG_OverlayWidgetController* URPG_AbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -100,3 +101,46 @@ UCharacterClassInfo* URPG_AbilitySystemLibrary::GetCharacterClassInfo(const UObj
 		return nullptr;
 	}
 }
+
+bool URPG_AbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FRPGGameplayEffectContext* RPG_EffectContext = static_cast<const FRPGGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return RPG_EffectContext->IsBlockedHit();
+	}
+	return false;
+}
+
+bool URPG_AbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FRPGGameplayEffectContext* RPG_EffectContext = static_cast<const FRPGGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return RPG_EffectContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void URPG_AbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
+{
+	if (FRPGGameplayEffectContext* RPG_EffectContext = static_cast<FRPGGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		RPG_EffectContext->SetIsBlockedHit(bInIsBlockedHit);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(0, 10.f, FColor::Red, FString("CAST TO FRPGGameplayEffectContext FAILED in SetIsBlockedHit!"));
+	}
+}
+
+void URPG_AbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit)
+{
+	if (FRPGGameplayEffectContext* RPG_EffectContext = static_cast<FRPGGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		RPG_EffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(0, 10.f, FColor::Red, FString("CAST TO FRPGGameplayEffectContext FAILED in SetIsCriticalHit!"));
+	}
+}
+
