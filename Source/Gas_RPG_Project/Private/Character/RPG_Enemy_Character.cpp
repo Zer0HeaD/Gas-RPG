@@ -9,6 +9,9 @@
 #include "RPG_GameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "AI/RPGAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ARPG_Enemy_Character::ARPG_Enemy_Character()
 {
@@ -20,6 +23,19 @@ ARPG_Enemy_Character::ARPG_Enemy_Character()
 
 	InfoWidget = CreateDefaultSubobject<UWidgetComponent>("Stat Widget");
 	InfoWidget->SetupAttachment(GetRootComponent());
+}
+
+void ARPG_Enemy_Character::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// USE IN MULTIPLAYER CASE ONLY!
+	//if (!HasAuthority()) return;
+	RPGAIController = Cast<ARPGAIController>(NewController);
+	RPGAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	RPGAIController->RunBehaviorTree(BehaviorTree);
+	RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+	RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangeAttacker"), CharacterClass != ECharacterClass::Warrior);
 }
 
 void ARPG_Enemy_Character::BeginPlay()
@@ -106,6 +122,7 @@ void ARPG_Enemy_Character::HitReactTagChanged(const FGameplayTag CallbackTag, in
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? HitWalkSpeed : BaseWalkSpeed;
+	RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 
 	if (bHitReacting)
 	{

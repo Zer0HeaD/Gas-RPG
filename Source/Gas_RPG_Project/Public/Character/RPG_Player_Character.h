@@ -13,6 +13,8 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class URPG_InputConfig;
+class USpringArmComponent;
+class UCameraComponent;
 /**
  * 
  */
@@ -20,6 +22,14 @@ UCLASS()
 class GAS_RPG_PROJECT_API ARPG_Player_Character : public ARPG_Gas_Character
 {
 	GENERATED_BODY()
+
+	/** Camera boom positioning the camera behind the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* FPSCameraSpringArm;
+
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* FPSCamera;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -54,7 +64,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void Tick(float DeltaTime) override;
 	virtual void NotifyControllerChanged() override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -89,5 +99,19 @@ private:
 
 public:
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Controls, meta = (AllowPrivateAccess = "true"))
+	float MaxWeaponPitch = -1000.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Controls, meta = (AllowPrivateAccess = "true"))
+	float MinWeaponPitch = 1000.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Controls, meta = (AllowPrivateAccess = "true"))
+	float MaxWeaponPivot = -1000.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Controls, meta = (AllowPrivateAccess = "true"))
+	float MinWeaponPivot = 1000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Controls") FRotator LookRotation = FRotator::ZeroRotator;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Controls, meta = (AllowPrivateAccess = "true")) float PivotOffsetPitch;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float MoveX = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float LookX = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float LookY = 0.f;
 
 };

@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "RPGAIController.generated.h"
 
+class UBlackboardComponent;
+class UBehaviorTreeComponent;
 /**
  * 
  */
@@ -15,6 +17,10 @@ class GAS_RPG_PROJECT_API ARPGAIController : public AAIController
 	GENERATED_BODY()
 	
 public:
+	ARPGAIController();
 
+protected:
+	UPROPERTY() TObjectPtr<UBlackboardComponent> BlackboardComponent;
+	UPROPERTY() TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
 
 };

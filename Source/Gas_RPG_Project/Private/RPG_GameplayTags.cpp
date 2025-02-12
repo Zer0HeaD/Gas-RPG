@@ -171,4 +171,8 @@ void FRPG_GameplayTags::InitializeNativeGameplayTags()
 		FName("Attributes.Resistance.Blood"),
 		FString("Blood Resistance Type"));
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Blood, GameplayTags.Attributes_Resistance_Blood);
+
+	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Attack"),
+		FString("Ability to Attack"));
 }

@@ -14,8 +14,8 @@ enum class ECharacterClass : uint8
 {
 	Knight,
 	Warrior,
-	Assassin,
-	Templar,
+	Ranger,
+	Animal,
 	Sorcerer,
 	Arkanist,
 	Beggar
@@ -27,6 +27,8 @@ struct FCharacterClassDefaultInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults") TSubclassOf<UGameplayEffect> PrimaryAttributes;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults") TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
 };
 /**
  * 

@@ -9,6 +9,8 @@
 #include "RPG_Enemy_Character.generated.h"
 
 class UWidgetComponent;
+class UBehaviorTree;
+class ARPGAIController;
 /**
  * 
  */
@@ -18,6 +20,7 @@ class GAS_RPG_PROJECT_API ARPG_Enemy_Character : public ARPG_Gas_Character
 	GENERATED_BODY()
 public:
 	ARPG_Enemy_Character();
+	virtual void PossessedBy(AController* NewController);
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,6 +34,9 @@ protected:
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") float KnockbackImpulseForce = 500.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<UWidgetComponent> InfoWidget;
+
+	UPROPERTY(EditAnywhere, Category = "AI") TObjectPtr<UBehaviorTree> BehaviorTree;
+	UPROPERTY() TObjectPtr<ARPGAIController> RPGAIController;
 
 public:
 
@@ -50,4 +56,5 @@ public:
 
 	UPROPERTY(BlueprintAssignable) FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable) FOnAttributeChangedSignature OnMaxHealthChanged;
+
 };

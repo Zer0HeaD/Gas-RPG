@@ -14,9 +14,22 @@
 #include <Input/RPGInputComponent.h>
 #include <AbilitySystemBlueprintLibrary.h>
 
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+
 ARPG_Player_Character::ARPG_Player_Character()
 {
+	PrimaryActorTick.bCanEverTick = true;
 
+	// Create a camera boom (pulls in towards the player if there is a collision)
+	FPSCameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("FPS Camera Spring Arm"));
+	FPSCameraSpringArm->SetupAttachment(GetMesh(), FName("head"));
+	FPSCameraSpringArm->TargetArmLength = 0.f; // The camera follows at this distance behind the character	
+	FPSCameraSpringArm->bUsePawnControlRotation = false; // Rotate the arm based on the controller
+
+	// Create a follow camera
+	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPS Camera"));
+	FPSCamera->SetupAttachment(FPSCameraSpringArm, USpringArmComponent::SocketName);
 }
 
 void ARPG_Player_Character::PossessedBy(AController* NewController)
@@ -102,6 +115,26 @@ void ARPG_Player_Character::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ARPG_Player_Character::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FRotator AimRotation = GetControlRotation();
+
+	FRotator Delta = AimRotation - GetActorRotation();
+	Delta.Normalize();
+	LookRotation = Delta;
+
+	auto AimRot = GetBaseAimRotation();
+	auto ActorRot = GetActorRotation();
+	float PitchDelta = FRotator::NormalizeAxis(AimRot.Pitch - ActorRot.Pitch);
+
+	PivotOffsetPitch = FMath::GetMappedRangeValueClamped(
+		FVector2D(MinWeaponPitch, MaxWeaponPitch),
+		FVector2D(MinWeaponPivot, MaxWeaponPivot),
+		PitchDelta);
+}
+
 void ARPG_Player_Character::NotifyControllerChanged()
 {
 	Super::NotifyControllerChanged();
@@ -155,6 +188,7 @@ void ARPG_Player_Character::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
+		MoveX = MovementVector.X;
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -179,6 +213,8 @@ void ARPG_Player_Character::Look(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
+		LookX = LookAxisVector.X;
+		LookY = LookAxisVector.Y;
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
