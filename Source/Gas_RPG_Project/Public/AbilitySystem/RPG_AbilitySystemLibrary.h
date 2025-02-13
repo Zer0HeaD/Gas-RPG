@@ -37,7 +37,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|CharacterClassDefaults")
 	static void GiveStartupAbilities(
 		const UObject* WorldContextObject,
-		UAbilitySystemComponent* ASC);
+		UAbilitySystemComponent* ASC,
+		ECharacterClass CharacterClass);
 
 	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);

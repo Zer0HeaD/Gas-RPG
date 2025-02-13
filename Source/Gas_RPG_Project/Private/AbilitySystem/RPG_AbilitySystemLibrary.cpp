@@ -9,6 +9,7 @@
 #include "Game/RPG_GameModeBase.h"
 #include "AbilitySystem/RPG_AbilitySystemComponent.h"
 #include "RPG_AbilityTypes.h"
+#include <Interaction/CombatInterface.h>
 
 URPG_OverlayWidgetController* URPG_AbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -78,15 +79,26 @@ void URPG_AbilitySystemLibrary::InitializeDefultAttributes(
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }
 
-void URPG_AbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+void URPG_AbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
-	check(CharacterClassInfo);
+	if (CharacterClassInfo == nullptr) return;
 
 	for (auto AbilityClass : CharacterClassInfo->CommonAbilities)
 	{
+		// warning: HARDCODED LEVEL!
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		ASC->GiveAbility(AbilitySpec);
+	}
+
+	const FCharacterClassDefaultInfo DefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	for (auto AbilityClass : DefaultInfo.StartupAbilities)
+	{
+		if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(ASC->GetAvatarActor()))
+		{
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, CombatInterface->GetPlayerLevel());
+			ASC->GiveAbility(AbilitySpec);
+		}
 	}
 }
 

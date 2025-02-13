@@ -53,6 +53,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement") float HitWalkSpeed = 250.f;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement") float BaseWalkSpeed = 450.f;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Combat") TObjectPtr<AActor> CombatTarget;
+
 
 	UPROPERTY(BlueprintAssignable) FOnAttributeChangedSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable) FOnAttributeChangedSignature OnMaxHealthChanged;

@@ -45,7 +45,7 @@ void ARPG_Enemy_Character::BeginPlay()
 
 	if (HasAuthority())
 	{
-		URPG_AbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+		URPG_AbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
 	if (URPG_UserWidget* RPG_UserWidget = Cast<URPG_UserWidget>(InfoWidget->GetUserWidgetObject()))
