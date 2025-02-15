@@ -132,6 +132,14 @@ bool URPG_AbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle
 	return false;
 }
 
+bool URPG_AbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	const bool bBothArePlayers = FirstActor->ActorHasTag(FName("Player")) && SecondActor->ActorHasTag(FName("Player"));
+	const bool bBothAreEnemies = FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy"));
+	const bool bFriend = bBothArePlayers || bBothAreEnemies;
+	return !bFriend;
+}
+
 void URPG_AbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
 {
 	if (FRPGGameplayEffectContext* RPG_EffectContext = static_cast<FRPGGameplayEffectContext*>(EffectContextHandle.Get()))

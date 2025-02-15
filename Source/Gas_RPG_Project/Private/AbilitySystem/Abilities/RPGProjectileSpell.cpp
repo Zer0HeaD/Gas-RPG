@@ -18,7 +18,7 @@ void URPGProjectileSpell::ActivateAbility(
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
+void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier, bool bUsePitchModifier)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -27,7 +27,10 @@ void URPGProjectileSpell::SpawnProjectile(float ProjectileRotationPitchModifier)
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
 		FRotator Rotation = CombatInterface->GetOwnerRotation();
-		Rotation.Pitch = ProjectileRotationPitchModifier;
+		if (bUsePitchModifier)
+		{
+			Rotation.Pitch = ProjectileRotationPitchModifier;
+		}
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);

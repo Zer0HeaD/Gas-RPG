@@ -115,6 +115,8 @@ void ARPG_Enemy_Character::Die()
 {
 	//TODO: we can set lifespan to delete enemy from world with dessolving, or leave it in ragdoll.
 	SetLifeSpan(LifeSpan);
+	if(RPGAIController) RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
+
 	Super::Die();
 }
 

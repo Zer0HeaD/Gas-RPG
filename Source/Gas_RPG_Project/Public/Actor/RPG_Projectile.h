@@ -21,7 +21,7 @@ public:
 	// Sets default values for this actor's properties
 	ARPG_Projectile();
 
-	UPROPERTY(VisibleAnywhere) TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true)) FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
@@ -41,7 +41,7 @@ private:
 	bool bHit = false;
 	UPROPERTY(EditDefaultsOnly) float LifeSpan = 15.f;
 
-	UPROPERTY(VisibleAnywhere) TObjectPtr<USphereComponent> Sphere;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true")) TObjectPtr<USphereComponent> Sphere;
 
 	UPROPERTY(EditAnywhere) TObjectPtr<UNiagaraSystem> ImpactEffect;
 	UPROPERTY(EditAnywhere) TObjectPtr<USoundBase> ImpactSound;

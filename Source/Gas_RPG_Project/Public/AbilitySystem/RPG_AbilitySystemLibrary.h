@@ -54,4 +54,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|Gameplay Effects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
+
+	UFUNCTION(BlueprintCallable, Category = "RPG_AbilitySystemLibrary|Helpers")
+	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
 };

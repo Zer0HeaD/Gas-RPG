@@ -25,7 +25,7 @@ protected:
 		const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Projectile") 
-	void SpawnProjectile(float ProjectileRotationPitchModifier = 0.f);
+	void SpawnProjectile(float ProjectileRotationPitchModifier = 0.f, bool bUsePitchModifier = true);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<ARPG_Projectile> ProjectileClass;
 };

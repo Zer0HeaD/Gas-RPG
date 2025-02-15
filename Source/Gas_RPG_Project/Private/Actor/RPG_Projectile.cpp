@@ -10,6 +10,7 @@
 #include "Gas_RPG_Project/Gas_RPG_Project.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 
 // Sets default values
 ARPG_Projectile::ARPG_Projectile()
@@ -64,6 +65,16 @@ void ARPG_Projectile::Destroyed()
 
 void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor == GetInstigator()) return;
+
+	// Prevent players and enemies damage itself. For melee it's handled by combo graph
+	if (!URPG_AbilitySystemLibrary::IsNotFriend(
+		DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(),
+		OtherActor))
+	{
+		return;
+	}
+
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	
