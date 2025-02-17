@@ -4,9 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameplayTagContainer.h"
 #include "CombatInterface.generated.h"
 
 class UAnimMontage;
+class UNiagaraSystem;
+
+USTRUCT(BlueprintType)
+struct FTaggedMontage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) UAnimMontage* Montage = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FGameplayTag MontageTag;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) USoundBase* ImpactSound = nullptr;
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType)
 class UCombatInterface : public UInterface
@@ -30,5 +43,11 @@ public:
 	virtual void Die() = 0;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) UAnimMontage* GetHitReactMontage();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) UAnimMontage* GetDeathMontage();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) UNiagaraSystem* GetHitEffect();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) USoundBase* GetHitSound();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) int32 GetMinionCount();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void SetMinionCount(int32 Amount);
 
 };

@@ -7,9 +7,11 @@
 #include "Player/RPG_PlayerController.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
+#include <Gas_RPG_Project/Gas_RPG_Project.h>
 
 // Sets default values
-ARPG_Gas_Character::ARPG_Gas_Character()
+ARPG_Gas_Character::ARPG_Gas_Character(const FObjectInitializer& ObjectInitializer) :
+	Super(ObjectInitializer)  // Make sure to call the base class constructor
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -37,6 +39,35 @@ void ARPG_Gas_Character::Die()
 {
 	//TODO: DROP WEAPON ON DEATH
 	MulticastHandleDeath();
+}
+
+UNiagaraSystem* ARPG_Gas_Character::GetHitEffect_Implementation()
+{
+	return HitEffect;
+}
+
+USoundBase* ARPG_Gas_Character::GetHitSound_Implementation()
+{
+	return HitSound;
+}
+
+UAnimMontage* ARPG_Gas_Character::GetDeathMontage_Implementation()
+{
+	return DeathMontage;
+}
+
+int32 ARPG_Gas_Character::GetMinionCount_Implementation()
+{
+	return MinionCount;
+}
+
+void ARPG_Gas_Character::SetMinionCount_Implementation(int32 Amount)
+{
+	MinionCount += Amount;
+	if (MinionCount < 0)
+	{
+		MinionCount = 0;
+	}
 }
 
 void ARPG_Gas_Character::MulticastHandleDeath_Implementation()

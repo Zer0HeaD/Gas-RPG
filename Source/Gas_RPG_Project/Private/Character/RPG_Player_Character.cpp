@@ -17,9 +17,39 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
-ARPG_Player_Character::ARPG_Player_Character()
+#include "RecoilAnimationComponent.h"
+#include "Components/CombatComponent.h"
+#include "Character/RPG_ParkourMovementComponent.h"
+
+ARPG_Player_Character::ARPG_Player_Character(const FObjectInitializer& ObjectInitializer) :
+	Super(ObjectInitializer.SetDefaultSubobjectClass<URPG_ParkourMovementComponent>
+		(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	ParkourMovementComponent = Cast<URPG_ParkourMovementComponent>(GetCharacterMovement());
+	ParkourMovementComponent->SetIsReplicated(true);
+
+	// Default params to Parkour Movement Component
+	ParkourMovementComponent->GravityScale = 1.f;
+	ParkourMovementComponent->MaxAcceleration = 1660.f;
+	ParkourMovementComponent->BrakingFrictionFactor = 0.15f;
+	ParkourMovementComponent->BrakingFriction = 0.15f;
+	ParkourMovementComponent->CrouchedHalfHeight = 60.f;
+	ParkourMovementComponent->bUseSeparateBrakingFriction = true;
+	ParkourMovementComponent->Mass = 200.f;
+	ParkourMovementComponent->MaxWalkSpeed = 450.f;
+	ParkourMovementComponent->MaxWalkSpeedCrouched = 200.f;
+	ParkourMovementComponent->MinAnalogWalkSpeed = 20.f;
+	ParkourMovementComponent->BrakingDecelerationWalking = 1024.f;
+
+	ParkourMovementComponent->JumpZVelocity = 500.f;
+	ParkourMovementComponent->BrakingDecelerationFalling = 300.f;
+	ParkourMovementComponent->AirControl = 0.35f;
+	ParkourMovementComponent->AirControlBoostMultiplier = 2.f;
+	ParkourMovementComponent->AirControlBoostVelocityThreshold = 25.f;
+	ParkourMovementComponent->FallingLateralFriction = 500.f;
+
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	FPSCameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("FPS Camera Spring Arm"));
@@ -30,6 +60,9 @@ ARPG_Player_Character::ARPG_Player_Character()
 	// Create a follow camera
 	FPSCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPS Camera"));
 	FPSCamera->SetupAttachment(FPSCameraSpringArm, USpringArmComponent::SocketName);
+
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	RecoilAnimationComponent = CreateDefaultSubobject<URecoilAnimationComponent>(TEXT("RecoilAnimationComponent"));
 }
 
 void ARPG_Player_Character::PossessedBy(AController* NewController)
@@ -108,6 +141,18 @@ void ARPG_Player_Character::AbilityInputTagHeld(FGameplayTag InputTag)
 {
 	if (!GetRPG_ASC()) return;
 	GetRPG_ASC()->AbilityInputTagHeld(InputTag);
+}
+
+FCollisionQueryParams ARPG_Player_Character::GetIgnoreCharacterParams() const
+{
+	FCollisionQueryParams Params;
+	TArray<AActor*> CharacterChildren;
+	GetAllChildActors(CharacterChildren);
+
+	Params.AddIgnoredActors(CharacterChildren);
+	Params.AddIgnoredActor(this);
+
+	return Params;
 }
 
 void ARPG_Player_Character::BeginPlay()
@@ -261,3 +306,5 @@ void ARPG_Player_Character::OpenMenu()
 	}
 }
 
+void ARPG_Player_Character::OnAimStarted_Implementation() {}
+void ARPG_Player_Character::OnAimEnded_Implementation() {}

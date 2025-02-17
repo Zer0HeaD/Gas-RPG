@@ -15,6 +15,9 @@ struct FInputActionValue;
 class URPG_InputConfig;
 class USpringArmComponent;
 class UCameraComponent;
+class URecoilAnimationComponent;
+class UCombatComponent;
+class URPG_ParkourMovementComponent;
 /**
  * 
  */
@@ -52,7 +55,17 @@ class GAS_RPG_PROJECT_API ARPG_Player_Character : public ARPG_Gas_Character
 	UInputAction* MenuAction;
 
 public:
-	ARPG_Player_Character();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Shooting, meta = (AllowPrivateAccess = "true"))
+	URecoilAnimationComponent* RecoilAnimationComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Shooting, meta = (AllowPrivateAccess = "true"))
+	UCombatComponent* CombatComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	URPG_ParkourMovementComponent* ParkourMovementComponent;
+
+public:
+	ARPG_Player_Character(const FObjectInitializer& ObjectInitializer);
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
@@ -114,4 +127,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float LookX = 0.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) float LookY = 0.f;
 
+	FCollisionQueryParams GetIgnoreCharacterParams() const;
+	bool bPressedExtendedJump;
+
+	/* SHOOTING MECHANICS */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Shooting")
+	void OnAimStarted();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Shooting")
+	void OnAimEnded();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void UpdateWeaponBarCurrentAmmo();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void UpdateWeaponBarMaxAmmo();
 };

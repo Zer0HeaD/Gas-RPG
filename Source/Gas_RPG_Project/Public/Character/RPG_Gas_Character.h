@@ -14,6 +14,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
 class UGameplayAbility;
+class UNiagaraSystem;
 
 UCLASS(Abstract)
 class GAS_RPG_PROJECT_API ARPG_Gas_Character : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -22,7 +23,7 @@ class GAS_RPG_PROJECT_API ARPG_Gas_Character : public ACharacter, public IAbilit
 
 public:
 	// Sets default values for this character's properties
-	ARPG_Gas_Character();
+	ARPG_Gas_Character(const FObjectInitializer& ObjectInitializer);
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
@@ -30,6 +31,14 @@ public:
 	
 	virtual void Die() override;
 	UFUNCTION(NetMulticast, Reliable) virtual void MulticastHandleDeath();
+
+	virtual UNiagaraSystem* GetHitEffect_Implementation() override;
+	virtual USoundBase* GetHitSound_Implementation() override;
+	virtual UAnimMontage* GetDeathMontage_Implementation() override;
+	virtual int32 GetMinionCount_Implementation() override;
+	virtual void SetMinionCount_Implementation(int32 Amount) override;
+
+	UPROPERTY(EditAnywhere, Category = "Combat") TArray<FTaggedMontage> AttackMontages;
 
 protected:
 	// Called when the game starts or when spawned
@@ -68,6 +77,14 @@ protected:
 	/// CURRENTLY NOT USING DURING USING MATERIAL FUNCTION
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  UNiagaraSystem* HitEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  USoundBase* HitSound;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  UAnimMontage* DeathMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") float LifeSpan = 20.f;
+
+	/* MINIONS */
+	int32 MinionCount = 0;
 
 private:
 

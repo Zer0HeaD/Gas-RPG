@@ -123,7 +123,7 @@ void UExecCalc_Damage::Execute_Implementation(
 		const FGameplayEffectAttributeCaptureDefinition CaptureDef = RPGDamageStatics().TagsToCaptureDefs[ResistanceTag];
 
 		// get damage type value
-		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
+		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key, false);
 
 		// calc resistance value
 		float Resistance = 0.f;

@@ -13,7 +13,8 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-ARPG_Enemy_Character::ARPG_Enemy_Character()
+ARPG_Enemy_Character::ARPG_Enemy_Character(const FObjectInitializer& ObjectInitializer) :
+	Super(ObjectInitializer)  // Make sure to call the base class constructor
 {
 	AbilitySystemComponent = CreateDefaultSubobject<URPG_AbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -23,6 +24,8 @@ ARPG_Enemy_Character::ARPG_Enemy_Character()
 
 	InfoWidget = CreateDefaultSubobject<UWidgetComponent>("Stat Widget");
 	InfoWidget->SetupAttachment(GetRootComponent());
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ARPG_Enemy_Character::PossessedBy(AController* NewController)
@@ -115,8 +118,9 @@ void ARPG_Enemy_Character::Die()
 {
 	//TODO: we can set lifespan to delete enemy from world with dessolving, or leave it in ragdoll.
 	SetLifeSpan(LifeSpan);
-	if(RPGAIController) RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
+	if (RPGAIController) RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
 
+	InfoWidget->DestroyComponent(true);
 	Super::Die();
 }
 

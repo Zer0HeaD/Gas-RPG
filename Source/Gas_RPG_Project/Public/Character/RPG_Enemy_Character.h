@@ -19,7 +19,7 @@ class GAS_RPG_PROJECT_API ARPG_Enemy_Character : public ARPG_Gas_Character
 {
 	GENERATED_BODY()
 public:
-	ARPG_Enemy_Character();
+	ARPG_Enemy_Character(const FObjectInitializer& ObjectInitializer);
 	virtual void PossessedBy(AController* NewController);
 
 protected:
@@ -49,7 +49,6 @@ public:
 	void HeavyHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat") bool bHitReacting;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") float LifeSpan = 5.f;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement") float HitWalkSpeed = 250.f;
 	UPROPERTY(BlueprintReadOnly, Category = "Movement") float BaseWalkSpeed = 450.f;
 

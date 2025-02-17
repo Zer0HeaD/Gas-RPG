@@ -74,6 +74,7 @@ public:
 	FGameplayTag Attributes_Resistance_Blood;
 
 	FGameplayTag Abilities_Attack;
+	FGameplayTag Abilities_Summon;
 
 	TArray<FGameplayTag> DamageTypes;
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
