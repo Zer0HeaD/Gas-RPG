@@ -54,6 +54,14 @@ class GAS_RPG_PROJECT_API ARPG_Player_Character : public ARPG_Gas_Character
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MenuAction;
 
+	/** Crouch Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CrouchAction;
+
+	/** Crouch Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
+
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Shooting, meta = (AllowPrivateAccess = "true"))
 	URecoilAnimationComponent* RecoilAnimationComponent;
@@ -90,6 +98,20 @@ protected:
 
 	void OpenMenu();
 
+	virtual void Jump() override;
+	virtual bool CanJumpInternal_Implementation() const override;
+
+	void StartSprinting();
+	UFUNCTION(BlueprintCallable) void StopSprinting();
+	void StopSprintingOnMinimalSpeed();
+
+	FTimerHandle SprintCheckTimerHandle;
+
+	virtual void Landed(const FHitResult& Hit) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float MinimalSpeedToStopSprinting = 200.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player's Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<URPG_UserWidget> PauseMenuWidgetClass;
 
@@ -111,6 +133,7 @@ private:
 	UPROPERTY() TObjectPtr<URPG_AbilitySystemComponent> RPGAbilitySystemComponent;
 
 public:
+	virtual void StopJumping() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Controls, meta = (AllowPrivateAccess = "true"))
 	float MaxWeaponPitch = -1000.f;

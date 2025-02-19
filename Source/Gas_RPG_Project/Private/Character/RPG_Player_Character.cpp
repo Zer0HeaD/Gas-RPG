@@ -210,7 +210,11 @@ void ARPG_Player_Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		// Looking
 		RPGInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Look);
 
+		// Open Menu
 		RPGInputComponent->BindAction(MenuAction, ETriggerEvent::Started, this, &ARPG_Player_Character::OpenMenu);
+
+		// Sprint
+		RPGInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ARPG_Player_Character::StartSprinting);
 
 		RPGInputComponent->BindAbilityActions(
 			InputConfig, 
@@ -304,6 +308,79 @@ void ARPG_Player_Character::OpenMenu()
 		}
 		bUIOpened = !bUIOpened;
 	}
+}
+
+void ARPG_Player_Character::Jump()
+{
+	Super::Jump();
+
+	bPressedExtendedJump = true;
+	bPressedJump = false;
+
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	StopSprinting();
+}
+
+void ARPG_Player_Character::StopJumping()
+{
+	Super::StopJumping();
+
+	bPressedExtendedJump = false;
+}
+
+bool ARPG_Player_Character::CanJumpInternal_Implementation() const
+{
+	if (Super::CanJumpInternal_Implementation())
+	{
+		return true;
+	}
+	else
+	{
+		return ParkourMovementComponent->IsCrouching() &&
+			!ParkourMovementComponent->IsFalling();
+	}
+}
+
+void ARPG_Player_Character::StartSprinting()
+{
+	if (ParkourMovementComponent->IsSprinting())
+	{
+		StopSprinting();
+	}
+	else
+	{
+		ParkourMovementComponent->SprintPressed();
+
+		GetWorld()->GetTimerManager().SetTimer(
+			SprintCheckTimerHandle,
+			this,
+			&ARPG_Player_Character::StopSprintingOnMinimalSpeed,
+			0.1f,
+			true);
+	}
+}
+
+void ARPG_Player_Character::StopSprinting()
+{
+	ParkourMovementComponent->SprintReleased();
+
+	GetWorld()->GetTimerManager().ClearTimer(SprintCheckTimerHandle);
+}
+
+void ARPG_Player_Character::StopSprintingOnMinimalSpeed()
+{
+	if (GetVelocity().Length() <= MinimalSpeedToStopSprinting)
+	{
+		StopSprinting();
+	}
+}
+
+void ARPG_Player_Character::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
 }
 
 void ARPG_Player_Character::OnAimStarted_Implementation() {}
