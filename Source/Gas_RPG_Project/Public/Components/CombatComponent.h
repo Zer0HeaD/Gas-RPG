@@ -31,9 +31,10 @@ enum class EPlayerStates : uint8
 UENUM(BlueprintType)
 enum class EAmmoType : uint8
 {
-	Ammo_AR		UMETA(DisplayName = "Assault Rifle Ammo"),
-	Ammo_SMG	UMETA(DisplayName = "Submachine Gun Ammo"),
-	Ammo_Pistol UMETA(DisplayName = "Pistol Ammo"),
+	Ammo_AR			UMETA(DisplayName = "Assault Rifle Ammo"),
+	Ammo_SMG		UMETA(DisplayName = "Submachine Gun Ammo"),
+	Ammo_Pistol		UMETA(DisplayName = "Pistol Ammo"),
+	Ammo_Shotgun	UMETA(DisplayName = "Shotgun Ammo"),
 	// Add more ammo types as needed
 };
 
@@ -184,6 +185,8 @@ public:
 	// Sets default values for this component's properties
 	UCombatComponent();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<AWeaponBase> StartupWeapon;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -286,6 +289,9 @@ protected:
 #pragma region Weapon Ammo
 public:
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
+	bool bDebug = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
 	TMap<EAmmoType, FAmmoData> AmmoMap;
 
@@ -316,5 +322,5 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	FORCEINLINE FWeaponSettings GetCurrentWeaponSettings() { return CurrentWeaponSettings; }
 };

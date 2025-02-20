@@ -91,6 +91,19 @@ int32 ARPG_Player_Character::GetPlayerLevel()
 	return RPG_PlayerState->GetPlayerLevel();
 }
 
+FWeaponSettings ARPG_Player_Character::GetCurrentWeaponSettings_Implementation()
+{
+	if (CombatComponent)
+	{
+		return CombatComponent->GetCurrentWeaponSettings();
+	}
+	else
+	{
+		FWeaponSettings settings;
+		return settings;
+	}
+}
+
 void ARPG_Player_Character::InitAbilityActorInfo()
 {
 	ARPG_PlayerState* RPG_PlayerState = GetPlayerState<ARPG_PlayerState>();
@@ -267,6 +280,37 @@ void ARPG_Player_Character::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+
+	// STOP RECOIL ON MOVEMENT
+	if (CombatComponent && CombatComponent->bIsRecoilRecoveryActive)
+	{
+		FRotator currentRotation = GetControlRotation();
+		FRotator checkpointRotation = CombatComponent->RecoilCheckpoint;
+
+		FRotator deltaRotation = UKismetMathLibrary::NormalizedDeltaRotator(currentRotation, checkpointRotation);
+
+		if (LookAxisVector.Y < 0.f)
+		{
+			CombatComponent->bIsRecoilRecoveryActive = false;
+			CombatComponent->bIsRecoilNeutral = true;
+			return;
+		}
+
+		if (deltaRotation.Pitch < 0.f)
+		{
+			CombatComponent->bUpdateRecoilPitchCheckpointInNextShot = true;
+		}
+
+		if (LookAxisVector.X != 0.f)
+		{
+			if (CombatComponent->bIsRecoilYawRecoveryActive)
+			{
+				CombatComponent->bIsRecoilYawRecoveryActive = false;
+			}
+
+			CombatComponent->bUpdateRecoilYawCheckpointInNextShot = true;
+		}
 	}
 }
 

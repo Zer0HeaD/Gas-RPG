@@ -18,6 +18,7 @@ class UCameraComponent;
 class URecoilAnimationComponent;
 class UCombatComponent;
 class URPG_ParkourMovementComponent;
+class AWeaponBase;
 /**
  * 
  */
@@ -80,6 +81,7 @@ public:
 #pragma region Combat Interface
 
 	virtual int32 GetPlayerLevel() override;
+	virtual FWeaponSettings GetCurrentWeaponSettings_Implementation() override;
 
 #pragma endregion
 
@@ -116,7 +118,6 @@ protected:
 	TSubclassOf<URPG_UserWidget> PauseMenuWidgetClass;
 
 	UPROPERTY() TObjectPtr<URPG_UserWidget> PauseMenuWidget;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true")) bool bUIOpened = false;
 
 private:

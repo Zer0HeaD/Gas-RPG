@@ -46,6 +46,19 @@ void UCombatComponent::BeginPlay()
 	AmmoMap.Add(EAmmoType::Ammo_AR, FAmmoData(120, 180));
 	AmmoMap.Add(EAmmoType::Ammo_SMG, FAmmoData(140, 210));
 	AmmoMap.Add(EAmmoType::Ammo_Pistol, FAmmoData(45, 90));
+	AmmoMap.Add(EAmmoType::Ammo_Shotgun, FAmmoData(24, 48));
+
+	// Spawn a startupGun
+	FActorSpawnParameters spawnParams;
+	CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartupWeapon, spawnParams);
+	if (PlayerOwner)
+	{
+		CurrentWeapon->AttachToComponent(
+			PlayerOwner->GetMesh(), 
+			FAttachmentTransformRules::KeepRelativeTransform, 
+			FName("SOCKET_Weapon"));
+	}
+	InitializeCurrentWeaponVariables();
 }
 
 void UCombatComponent::InitializeCurrentWeaponVariables()
@@ -285,19 +298,20 @@ void UCombatComponent::ShootAProjectile(const UWorld* World,
 	// CALCULATE SHOT DIRECTION
 	bool bHasHit = World->LineTraceSingleByChannel(result, TraceStart, TraceEnd, ECC_Visibility, Params);
 
-#ifdef DrawDebug
-
-	// DEBUG: Draw the spread cone
-	float ConeLength = 1000.0f;  // Adjust the length of the cone to visualize spread
-	DrawDebugCone(World, TraceStart, CameraRotation.Vector(), ConeLength,
-		FMath::DegreesToRadians(SpreadAngle), FMath::DegreesToRadians(SpreadAngle), 12, FColor::Green, false, 2.0f, 0, 1.0f);
-
-	DrawDebugLine(World, TraceStart, TraceEnd, FColor::Red, false, 3.0f, 0, 0.5f);
-	if (bHasHit)
+	if (bDebug)
 	{
-		DrawDebugBox(World, result.Location, FVector(15), FColor::Green, false, 3.0f, 0, 3.0f);
+		// DEBUG: Draw the spread cone
+		float ConeLength = 1000.0f;  // Adjust the length of the cone to visualize spread
+		DrawDebugCone(World, TraceStart, CameraRotation.Vector(), ConeLength,
+			FMath::DegreesToRadians(spread), FMath::DegreesToRadians(spread), 12, FColor::Green, false, 2.0f, 0, 1.0f);
+
+		DrawDebugLine(World, TraceStart, TraceEnd, FColor::Red, false, 3.0f, 0, 0.5f);
+		if (bHasHit)
+		{
+			DrawDebugBox(World, result.Location, FVector(15), FColor::Green, false, 3.0f, 0, 3.0f);
+		}
 	}
-#endif
+
 	// LAUNCH A PROJECTILE
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	LaunchDirection = (TraceEnd - TraceStart).GetSafeNormal();

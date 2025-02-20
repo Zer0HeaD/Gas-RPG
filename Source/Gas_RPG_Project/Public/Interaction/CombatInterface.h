@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "GameplayTagContainer.h"
+#include "Components/CombatComponent.h"
 #include "CombatInterface.generated.h"
 
 class UAnimMontage;
@@ -49,5 +50,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) USoundBase* GetHitSound();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) int32 GetMinionCount();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void SetMinionCount(int32 Amount);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) FWeaponSettings GetCurrentWeaponSettings();
 
 };

@@ -14,7 +14,7 @@ ARPG_Gas_Character::ARPG_Gas_Character(const FObjectInitializer& ObjectInitializ
 	Super(ObjectInitializer)  // Make sure to call the base class constructor
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("Greystone_Sword_Socket"));
@@ -87,6 +87,11 @@ void ARPG_Gas_Character::MulticastHandleDeath_Implementation()
 void ARPG_Gas_Character::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ARPG_Gas_Character::Tick(float DeltaTime)
+{
+	ACharacter::Tick(DeltaTime);
 }
 
 void ARPG_Gas_Character::InitAbilityActorInfo()
