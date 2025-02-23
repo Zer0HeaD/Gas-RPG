@@ -9,6 +9,7 @@
 #include "CombatInterface.generated.h"
 
 class UAnimMontage;
+class UCombatComponent;
 class UNiagaraSystem;
 
 USTRUCT(BlueprintType)
@@ -52,5 +53,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void SetMinionCount(int32 Amount);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) FWeaponSettings GetCurrentWeaponSettings();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) UCombatComponent* GetCombatComponent();
 
 };

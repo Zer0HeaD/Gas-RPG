@@ -14,9 +14,9 @@ AWeaponBase::AWeaponBase()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	SetRootComponent(WeaponMesh);
 
-	Mag = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mag"));
-	Mag->SetupAttachment(RootComponent, FName("SOCKET_Magazine"));
-	Mag->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Magazine = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mag"));
+	Magazine->SetupAttachment(RootComponent, FName("SOCKET_Magazine"));
+	Magazine->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned

@@ -32,7 +32,7 @@ public:
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* Mag;
+	UStaticMeshComponent* Magazine;
 
 
 

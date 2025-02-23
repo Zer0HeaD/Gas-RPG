@@ -44,6 +44,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true")) TObjectPtr<USphereComponent> Sphere;
 
 	UPROPERTY(EditAnywhere) TObjectPtr<UNiagaraSystem> ImpactEffect;
+	UPROPERTY(EditAnywhere) TObjectPtr<UMaterialInterface> BulletHoleDecal;
+	UPROPERTY(EditAnywhere) float DecalSize = 15.f;
+	UPROPERTY(EditAnywhere) float LifetimeSpanBulletHoleDecal = 15.f;
 	UPROPERTY(EditAnywhere) TObjectPtr<USoundBase> ImpactSound;
 	UPROPERTY(EditAnywhere) TObjectPtr<USoundBase> LoopingSound;
 	UPROPERTY() TObjectPtr<UAudioComponent> LoopingSoundComponent;

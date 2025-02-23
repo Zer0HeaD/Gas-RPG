@@ -82,6 +82,7 @@ public:
 
 	virtual int32 GetPlayerLevel() override;
 	virtual FWeaponSettings GetCurrentWeaponSettings_Implementation() override;
+	virtual UCombatComponent* GetCombatComponent_Implementation() override;
 
 #pragma endregion
 
@@ -133,6 +134,8 @@ private:
 
 	UPROPERTY() TObjectPtr<URPG_AbilitySystemComponent> RPGAbilitySystemComponent;
 
+	bool bStopPressing = true;
+
 public:
 	virtual void StopJumping() override;
 
@@ -162,4 +165,5 @@ public:
 	void OnAimEnded();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void UpdateWeaponBarCurrentAmmo();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void UpdateWeaponBarMaxAmmo();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void CreateWeaponBar();
 };

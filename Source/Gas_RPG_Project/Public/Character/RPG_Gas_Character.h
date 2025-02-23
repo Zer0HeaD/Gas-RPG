@@ -79,13 +79,15 @@ protected:
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  UNiagaraSystem* HitEffect;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  USoundBase* HitSound;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  UAnimMontage* DeathMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") float LifeSpan = 20.f;
 
 	/* MINIONS */
 	int32 MinionCount = 0;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  UNiagaraSystem* HitEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")  USoundBase* HitSound;
 
 private:
 

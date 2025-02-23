@@ -21,6 +21,8 @@
 #include "Components/CombatComponent.h"
 #include "Character/RPG_ParkourMovementComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+
 ARPG_Player_Character::ARPG_Player_Character(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<URPG_ParkourMovementComponent>
 		(ACharacter::CharacterMovementComponentName))
@@ -104,6 +106,18 @@ FWeaponSettings ARPG_Player_Character::GetCurrentWeaponSettings_Implementation()
 	}
 }
 
+UCombatComponent* ARPG_Player_Character::GetCombatComponent_Implementation()
+{
+	if (CombatComponent)
+	{
+		return CombatComponent;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 void ARPG_Player_Character::InitAbilityActorInfo()
 {
 	ARPG_PlayerState* RPG_PlayerState = GetPlayerState<ARPG_PlayerState>();
@@ -139,9 +153,12 @@ URPG_AbilitySystemComponent* ARPG_Player_Character::GetRPG_ASC()
 
 void ARPG_Player_Character::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	check(AbilitySystemComponent);
-
-	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	if (CombatComponent && CombatComponent->GetCurrentWeaponSettings().FireMode == EFireMode_PRAS::Semi)
+	{
+		if (!GetRPG_ASC()) return;
+		//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Open Fire Semi"), true, false, FColor::Cyan, 5.f);
+		GetRPG_ASC()->AbilityInputTagPressed(InputTag);
+	}
 }
 
 void ARPG_Player_Character::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -152,8 +169,12 @@ void ARPG_Player_Character::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void ARPG_Player_Character::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	if (!GetRPG_ASC()) return;
-	GetRPG_ASC()->AbilityInputTagHeld(InputTag);
+	if (CombatComponent && CombatComponent->GetCurrentWeaponSettings().FireMode == EFireMode_PRAS::Auto)
+	{
+		if (!GetRPG_ASC()) return;
+		//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Open Fire Auto"), true, false, FColor::Cyan, 5.f);
+		GetRPG_ASC()->AbilityInputTagHeld(InputTag);
+	}
 }
 
 FCollisionQueryParams ARPG_Player_Character::GetIgnoreCharacterParams() const

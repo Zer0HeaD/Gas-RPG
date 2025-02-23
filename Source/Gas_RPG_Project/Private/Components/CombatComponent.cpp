@@ -24,6 +24,9 @@ UCombatComponent::UCombatComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	// SOCKET_Weapon
+	// SOCKET_Back_Weapon
 }
 
 
@@ -50,15 +53,18 @@ void UCombatComponent::BeginPlay()
 
 	// Spawn a startupGun
 	FActorSpawnParameters spawnParams;
-	CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StartupWeapon, spawnParams);
-	if (PlayerOwner)
+
+	if (!WeaponsArray.IsEmpty())
 	{
-		CurrentWeapon->AttachToComponent(
-			PlayerOwner->GetMesh(), 
-			FAttachmentTransformRules::KeepRelativeTransform, 
-			FName("SOCKET_Weapon"));
+		CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponsArray[0], spawnParams);
+		CurrentWeaponIndex = 0;
+		if (PlayerOwner)
+		{
+			InitializeCurrentWeaponVariables();
+			PlayerOwner->CreateWeaponBar();
+			UnholsterWeapon();
+		}
 	}
-	InitializeCurrentWeaponVariables();
 }
 
 void UCombatComponent::InitializeCurrentWeaponVariables()
@@ -114,7 +120,7 @@ void UCombatComponent::StartFiring()
 			break;
 		case EFireMode_PRAS::Auto:
 
-			bFiringAWeapon = true;
+			/*bFiringAWeapon = true;
 			PlayerState = EPlayerStates::Shooting;
 			OnFire();
 			GetWorld()->GetTimerManager().SetTimer(
@@ -122,7 +128,25 @@ void UCombatComponent::StartFiring()
 				this,
 				&UCombatComponent::OnFire,
 				CurrentWeaponSettings.FireRateTimer,
-				true);
+				true);*/
+			if (bUnlockFire)
+			{
+				bFiringAWeapon = true;
+				PlayerState = EPlayerStates::Shooting;
+				OnFire();
+
+				GetWorld()->GetTimerManager().SetTimer(
+					LockingFireHandle,
+					this,
+					&UCombatComponent::UnlockFire,
+					CurrentWeaponSettings.FireRateTimer,
+					false);
+				bUnlockFire = false;
+			}
+			else
+			{
+				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock semi fire!"), true, false, FColor::Orange, 2.f);
+			}
 
 			break;
 		case EFireMode_PRAS::Burst:
@@ -213,7 +237,7 @@ bool UCombatComponent::CanFire()
 
 
 	if (IsBurstShootingInProgress || 
-		(CurrentWeaponSettings.CurrentMagazineAmmo > 0 && PlayerState == EPlayerStates::Unoccupied))
+		(CurrentWeapon && CurrentWeaponSettings.CurrentMagazineAmmo > 0 && PlayerState == EPlayerStates::Unoccupied))
 	{
 		return true;
 	}
@@ -273,6 +297,28 @@ void UCombatComponent::StopADS()
 	}
 }
 
+void UCombatComponent::SwapWeapons(int32 NewWeaponIndex)
+{
+	if (WeaponsArray.Num() >= 2 && WeaponsArray.IsValidIndex(NewWeaponIndex) && CurrentWeaponIndex != NewWeaponIndex)
+	{
+		bIsSwitchingWeapons = true;
+		SavedNewWeaponIndex = NewWeaponIndex;
+		CurrentWeaponIndex = SavedNewWeaponIndex;
+		// Holster Current Weapon
+		HolsterWeapon();
+	}
+	else
+	{
+		UKismetSystemLibrary::PrintString(
+			GetWorld(), 
+			TEXT("WARNING: FAILED TO SWAP A GUNS. INDEX OUT OF BOUNDS OR WEAPONS ARRAY CONTAINS ONLY ONE GUN!"), 
+			true, 
+			false, 
+			FColor::Red, 
+			5.f);
+	}
+}
+
 void UCombatComponent::ShootAProjectile(const UWorld* World, 
 	FVector MuzzleSocketLocation, FHitResult result, FActorSpawnParameters ActorSpawnParams, FVector LaunchDirection)
 {
@@ -319,11 +365,11 @@ void UCombatComponent::ShootAProjectile(const UWorld* World,
 	// spawn a bullet
 	if (CurrentWeaponSettings.BulletProjectile != NULL)
 	{
-		GetWorld()->SpawnActor<AActor>(
-			CurrentWeaponSettings.BulletProjectile,
-			MuzzleSocketLocation,
-			LaunchDirection.Rotation(),
-			ActorSpawnParams);
+		// BROADCAST SPAWN AN ABILITY SYSTEM PROJECTILE
+		ShootProjectileDelegate.Broadcast(
+			CurrentWeaponSettings.BulletProjectile, 
+			MuzzleSocketLocation, 
+			LaunchDirection.Rotation());
 	}
 	else
 	{
@@ -331,11 +377,15 @@ void UCombatComponent::ShootAProjectile(const UWorld* World,
 	}
 
 	//  We want to spawn a hit decal of every shot
-	if (CurrentWeaponSettings.HitImpact != nullptr)
+	/*if (CurrentWeaponSettings.BulletHoleDecal != nullptr)
 	{
 		UGameplayStatics::SpawnDecalAtLocation(World,
-			CurrentWeaponSettings.HitImpact, FVector(15.f), result.Location, result.ImpactNormal.Rotation(), 30.f);
+			CurrentWeaponSettings.BulletHoleDecal, FVector(15.f), result.Location, result.ImpactNormal.Rotation(), 30.f);
 	}
+	else
+	{
+		UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING! No BulletHoleDecal to spawn!"), true, false, FColor::Red, 5.f);
+	}*/
 }
 
 void UCombatComponent::OnFire()
@@ -435,10 +485,10 @@ void UCombatComponent::OnFire()
 				);
 			}
 
-			if (CurrentWeaponSettings.HitEffectParticle != nullptr)
+			/*if (CurrentWeaponSettings.HitEffectParticle != nullptr)
 			{
 				UGameplayStatics::SpawnEmitterAtLocation(World, CurrentWeaponSettings.HitEffectParticle, result.Location);
-			}
+			}*/
 
 			// Try and play the sound if specified
 			if (CurrentWeaponSettings.FireSound != nullptr)
@@ -584,6 +634,122 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		float interpSpeed = (1.f / DeltaTime) / CurrentWeaponSettings.BloomRecoveryInterpSpeed;
 
 		CurrentBloom = FMath::FInterpConstantTo(CurrentBloom, 0.f, DeltaTime, interpSpeed);
+	}
+}
+
+void UCombatComponent::UnholsterWeapon()
+{
+	if (!IsPlayerUnnocupied()) return;
+	PlayerState = EPlayerStates::GettingReady;
+
+	AttachCurrentWeaponToSocket(FName("SOCKET_Weapon"));
+	if (AnimInstance)
+	{
+		float currentAnimLength = 0.5f;
+		if (CurrentWeaponSettings.UnholsterAnimation)
+		{
+			AnimInstance->Montage_Play(CurrentWeaponSettings.UnholsterAnimation);
+			currentAnimLength = AnimInstance->GetCurrentActiveMontage()->GetPlayLength();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterAnimation IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+
+		if (CurrentWeaponSettings.WeaponUnholsterAnimation)
+		{
+			PlayWeaponAnimation(CurrentWeaponSettings.WeaponUnholsterAnimation);
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: Weapon UnholsterAnimation IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+		
+		if (CurrentWeaponSettings.UnholsterSound)
+		{
+			PlaySoundAtOwner(CurrentWeaponSettings.UnholsterSound);
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterSound IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+
+		GetWorld()->GetTimerManager().SetTimer(
+			UnholsterHandle,
+			this,
+			&UCombatComponent::HandleUnholstering,
+			currentAnimLength - CurrentWeaponSettings.UnholsterAnimationEarlyUnlockModifier,
+			false);
+	}
+}
+
+void UCombatComponent::HolsterWeapon()
+{
+	if (!IsPlayerUnnocupied()) return;
+	PlayerState = EPlayerStates::GettingReady;
+	if (AnimInstance)
+	{
+		float currentAnimLength = 0.5f;
+		if (CurrentWeaponSettings.UnholsterAnimation)
+		{
+			AnimInstance->Montage_Play(CurrentWeaponSettings.HolsterAnimation);
+			currentAnimLength = AnimInstance->GetCurrentActiveMontage()->GetPlayLength();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: HolsterAnimation IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+
+		//PlayWeaponAnimation(CurrentWeaponSettings.WeaponHolsterAnimation);
+		if (CurrentWeaponSettings.HolsterSound)
+		{
+			PlaySoundAtOwner(CurrentWeaponSettings.HolsterSound);
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: HolsterSound IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+
+		GetWorld()->GetTimerManager().SetTimer(
+			HolsterHandle,
+			this,
+			&UCombatComponent::HandleHolstering,
+			currentAnimLength,
+			false);
+	}
+}
+
+void UCombatComponent::HandleUnholstering()
+{
+	PlayerState = EPlayerStates::Unoccupied;
+	if (bIsSwitchingWeapons)
+	{
+		bIsSwitchingWeapons = false;
+	}
+}
+
+void UCombatComponent::HandleHolstering()
+{
+	PlayerState = EPlayerStates::Unoccupied;
+	// Attach execute in custom anim notify, in animation
+	//AttachCurrentWeaponToSocket(FName("SOCKET_Back_Weapon"));
+	if (bIsSwitchingWeapons)
+	{
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->Destroy();
+			CurrentWeapon = nullptr;
+		}
+
+		FActorSpawnParameters spawnParams;
+		CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponsArray[SavedNewWeaponIndex], spawnParams);
+		if (PlayerOwner)
+		{
+			InitializeCurrentWeaponVariables();
+			PlayerOwner->UpdateWeaponBarMaxAmmo();
+		}
+		UnholsterWeapon();
+		SavedNewWeaponIndex = 0;
 	}
 }
 
@@ -852,6 +1018,22 @@ void UCombatComponent::HandleEndReload()
 		HandleReload(CurrentWeaponSettings.AmmoType);
 		UnlockReload();
 	}
+}
+
+void UCombatComponent::AttachCurrentWeaponToSocket(FName SocketName)
+{
+	if (PlayerOwner && CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(
+			PlayerOwner->GetMesh(),
+			FAttachmentTransformRules::KeepRelativeTransform,
+			SocketName);
+	}
+}
+
+bool UCombatComponent::IsPlayerUnnocupied()
+{
+	return PlayerState == EPlayerStates::Unoccupied;
 }
 
 void UCombatComponent::PlayWeaponAnimation(UAnimMontage* InMontage)

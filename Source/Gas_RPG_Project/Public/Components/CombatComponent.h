@@ -7,6 +7,7 @@
 #include "Components/TimelineComponent.h" 
 #include "RecoilAnimationComponent.h"
 #include "Camera/CameraShakeBase.h"
+#include "Actor/RPG_Projectile.h"
 #include "CombatComponent.generated.h"
 
 class AWeaponBase;
@@ -17,6 +18,8 @@ class UCurveFloat;
 class UParticleSystem;
 class UMaterialInstance;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FShootProjectileDelegate, TSubclassOf<ARPG_Projectile>, ProjectileClass, FVector, MuzzleLocation, FRotator, LaunchDirection);
+
 UENUM(BlueprintType)
 enum class EPlayerStates : uint8
 {
@@ -25,7 +28,8 @@ enum class EPlayerStates : uint8
 	Reloading				UMETA(DisplayName = "Reloading"),
 	SwitchingWeapon			UMETA(DisplayName = "SwitchingWeapon"),
 	MeleeAtacking			UMETA(DisplayName = "MeleeAtacking"),
-	Climbing				UMETA(DisplayName = "Climbing")
+	Climbing				UMETA(DisplayName = "Climbing"),
+	GettingReady			UMETA(DisplayName = "GettingReady")
 };
 
 UENUM(BlueprintType)
@@ -75,105 +79,106 @@ struct FWeaponSettings : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 MagazineCapacity;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 CurrentMagazineAmmo;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) EAmmoType AmmoType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool IsPumpOrBoltAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 MagazineCapacity;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 CurrentMagazineAmmo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") EAmmoType AmmoType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") bool IsPumpOrBoltAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	UAnimMontage* ReloadInsertAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	UAnimMontage* ReloadEndAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	USoundBase* ReloadInsertSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	USoundBase* ReloadEndSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	UAnimMontage* WeaponReloadInsertAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	UAnimMontage* WeaponReloadEndAnimation;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite) float PumpOrBoltReloadTimer;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FireRateTimer;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float FireRateAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) TEnumAsByte<EFireMode_PRAS> FireMode;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 Burst;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 NumberOfBulletsPerShot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float FireRateTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float FireRateAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") TEnumAsByte<EFireMode_PRAS> FireMode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 Burst;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 NumberOfBulletsPerShot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float RecoilStat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float BaseRecoilPitchForce;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float BaseRecoilYawForce;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float BloomStep;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float ADSBloomModifier;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float BloomRecoveryInterpSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MaxBloom;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float MaxADSHeat;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) float ADSheatModifierMax;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) URecoilData* RecoilAnimData;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<UCameraShakeBase> RecoilCameraShake;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<AActor> BulletProjectile;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<AActor> BulletShellEject;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float RecoilStat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float BaseRecoilPitchForce;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float BaseRecoilYawForce;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float BloomStep;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float ADSBloomModifier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float BloomRecoveryInterpSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float MaxBloom;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float MaxADSHeat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") float ADSheatModifierMax;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UParticleSystem* WeaponMuzzleParticle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) FRotator WeaponMuzzleParticleRotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UParticleSystem* HitEffectParticle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UMaterialInterface* HitImpact;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") URecoilData* RecoilAnimData;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") TSubclassOf<UCameraShakeBase> RecoilCameraShake;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") TSubclassOf<ARPG_Projectile> BulletProjectile;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") TSubclassOf<AActor> BulletShellEject;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* UnholsterSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* HolsterSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* UnholsterQuickSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* HolsterQuickSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* AimInSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* AimOutSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* FireSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* FireSuppressorSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* FireEmptySound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* ReloadSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* ReloadEmptySound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* InspectSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) USoundBase* GrenadeThrowSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects") UParticleSystem* WeaponMuzzleParticle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects") FRotator WeaponMuzzleParticleRotation;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects") UMaterialInterface* BulletHoleDecal;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* UnholsterAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* HolsterAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* UnholsterSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* HolsterSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* UnholsterQuickAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* HolsterQuickAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* UnholsterQuickSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* HolsterQuickSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* AimInAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* AimOutAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* AimInSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* AimOutSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* FireAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* FireAimAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* FireSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* FireSuppressorSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* FireEmptySound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* EmptyFireAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* EmptyFireAimAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* ReloadSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* ReloadEmptySound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* InspectSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds") USoundBase* GrenadeThrowSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") float UnholsterAnimationEarlyUnlockModifier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* UnholsterAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* HolsterAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* UnholsterQuickAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* HolsterQuickAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* AimInAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* AimOutAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* FireAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* FireAimAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* EmptyFireAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* EmptyFireAimAnimation;
 
 	// For Pump And Bold action weapon - we using this animations as Reload Start and not come back to main reload function
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* ReloadAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* ReloadEmptyAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* ReloadAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* ReloadEmptyAnimation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* ReloadAimAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* ReloadAimEmptyAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* ReloadAimAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* ReloadAimEmptyAnimation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* MeleeAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* InspectAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* GrenadeThrowAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* MeleeAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* InspectAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Animations") UAnimMontage* GrenadeThrowAnimation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<UAnimInstance> WeaponAnimationBlueprint;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* WeaponFireAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* WeaponReloadAnimation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) UAnimMontage* WeaponEmptyReloadAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Animations") TSubclassOf<UAnimInstance> WeaponAnimationBlueprint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Animations") UAnimMontage* WeaponFireAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Animations") UAnimMontage* WeaponReloadAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Animations") UAnimMontage* WeaponEmptyReloadAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Animations") UAnimMontage* WeaponUnholsterAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Animations") UAnimMontage* WeaponHolsterAnimation;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -184,8 +189,8 @@ class GAS_RPG_PROJECT_API UCombatComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UCombatComponent();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) TSubclassOf<AWeaponBase> StartupWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<TSubclassOf<AWeaponBase>> WeaponsArray;
+	UPROPERTY(BlueprintAssignable) FShootProjectileDelegate ShootProjectileDelegate;
 
 protected:
 	// Called when the game starts
@@ -216,6 +221,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) EPlayerStates PlayerState = EPlayerStates::Unoccupied;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) bool bInADS = false;
+
+	UFUNCTION(BlueprintCallable) void SwapWeapons(int32 NewWeaponIndex);
 protected:
 
 	bool bFiringAWeapon = false;
@@ -226,6 +233,14 @@ protected:
 
 	int BurstCurrentShots = 0;
 	float BurstLockingTimer = 1.f;
+
+	FTimerHandle UnholsterHandle;
+	FTimerHandle HolsterHandle;
+	void HandleUnholstering();
+	void HandleHolstering();
+	bool bIsSwitchingWeapons = false;
+	int32 SavedNewWeaponIndex = 0;
+	int32 CurrentWeaponIndex = 0;
 
 #pragma endregion
 
@@ -316,6 +331,9 @@ private:
 	void PlaySoundAtOwner(USoundBase* InSound);
 	void HandleEndReload();
 
+	UFUNCTION(BlueprintCallable) void AttachCurrentWeaponToSocket(FName SocketName);
+	bool IsPlayerUnnocupied();
+
 #pragma endregion
 
 public:	
@@ -323,4 +341,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE FWeaponSettings GetCurrentWeaponSettings() { return CurrentWeaponSettings; }
+
+	UFUNCTION(BlueprintCallable) void UnholsterWeapon();
+	UFUNCTION(BlueprintCallable) void HolsterWeapon();
 };

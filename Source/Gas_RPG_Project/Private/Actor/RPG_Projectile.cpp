@@ -12,6 +12,9 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 
+#include "Character/RPG_Gas_Character.h"
+
+
 // Sets default values
 ARPG_Projectile::ARPG_Projectile()
 {
@@ -54,12 +57,12 @@ void ARPG_Projectile::BeginPlay()
 
 void ARPG_Projectile::Destroyed()
 {
-	if (!bHit && !HasAuthority())
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		//LoopingSoundComponent->Stop();
-	}
+	//if (!bHit && !HasAuthority())
+	//{
+	//	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	//	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	//	//LoopingSoundComponent->Stop();
+	//}
 	AActor::Destroyed();
 }
 
@@ -75,8 +78,28 @@ void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		return;
 	}
 
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if (ARPG_Gas_Character* HitCharacter = Cast<ARPG_Gas_Character>(OtherActor))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitCharacter->HitSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitCharacter->HitEffect, GetActorLocation());
+	}
+	else
+	{
+		if (BulletHoleDecal)
+		{
+			UGameplayStatics::SpawnDecalAtLocation(
+				GetWorld(),
+				BulletHoleDecal, 
+				FVector(DecalSize),
+				SweepResult.Location,
+				SweepResult.ImpactNormal.Rotation(), 
+				LifetimeSpanBulletHoleDecal);
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: NO BULLET HOLE TO SPAWN!"), true, false, FColor::Red, 5.f);
+		}
+	}
 	
 	//if(LoopingSoundComponent && LoopingSoundComponent->IsPlaying()) LoopingSoundComponent->Stop();
 
@@ -85,7 +108,6 @@ void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		if (UAbilitySystemComponent* Target_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			Target_ASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
-
 		}
 		
 
