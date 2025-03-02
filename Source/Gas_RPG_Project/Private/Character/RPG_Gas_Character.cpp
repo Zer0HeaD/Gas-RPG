@@ -70,6 +70,11 @@ void ARPG_Gas_Character::SetMinionCount_Implementation(int32 Amount)
 	}
 }
 
+UCombatComponent* ARPG_Gas_Character::GetCombatComponent_Implementation()
+{
+	return nullptr;
+}
+
 void ARPG_Gas_Character::MulticastHandleDeath_Implementation()
 {
 	//TODO: Simulate physics of weapon

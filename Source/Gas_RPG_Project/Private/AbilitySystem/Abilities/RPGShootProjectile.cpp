@@ -8,6 +8,8 @@
 #include "AbilitySystemComponent.h"
 #include "RPG_GameplayTags.h"
 
+#include "Components/CombatComponent.h"
+
 void URPGShootProjectile::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -38,10 +40,19 @@ void URPGShootProjectile::SpawnProjectile(TSubclassOf<ARPG_Projectile> Projectil
 
 	FRPG_GameplayTags GameplayTags = FRPG_GameplayTags::Get();
 
-	for (auto& Pair : DamageTypes)
+	//if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
-		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
+		/*CombatInterface->GetCombatComponent()*/
+		if (UCombatComponent* AvatarCombatComponent = ICombatInterface::Execute_GetCombatComponent(GetAvatarActorFromActorInfo()))
+		{
+			auto Local_DamageTypes = AvatarCombatComponent->GetCurrentWeaponSettings().DamageTypes;
+
+			for (auto& Pair : Local_DamageTypes)
+			{
+				const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+				UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
+			}
+		}
 	}
 
 	Projectile->DamageEffectSpecHandle = SpecHandle;

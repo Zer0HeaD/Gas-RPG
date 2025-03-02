@@ -105,7 +105,6 @@ protected:
 	virtual bool CanJumpInternal_Implementation() const override;
 
 	void StartSprinting();
-	UFUNCTION(BlueprintCallable) void StopSprinting();
 	void StopSprintingOnMinimalSpeed();
 
 	FTimerHandle SprintCheckTimerHandle;
@@ -138,6 +137,7 @@ private:
 
 public:
 	virtual void StopJumping() override;
+	UFUNCTION(BlueprintCallable) void StopSprinting();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Controls, meta = (AllowPrivateAccess = "true"))
 	float MaxWeaponPitch = -1000.f;

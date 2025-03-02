@@ -29,6 +29,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION() void OnSphereOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -39,16 +40,19 @@ protected:
 		const FHitResult& SweepResult);
 private:
 	bool bHit = false;
-	UPROPERTY(EditDefaultsOnly) float LifeSpan = 15.f;
+	AActor* PlayerTarget = nullptr;
+	FTimerHandle ResetHomingTimer;
+	void ResetHomingProjectile();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true")) TObjectPtr<USphereComponent> Sphere;
-
-	UPROPERTY(EditAnywhere) TObjectPtr<UNiagaraSystem> ImpactEffect;
-	UPROPERTY(EditAnywhere) TObjectPtr<UMaterialInterface> BulletHoleDecal;
-	UPROPERTY(EditAnywhere) float DecalSize = 15.f;
-	UPROPERTY(EditAnywhere) float LifetimeSpanBulletHoleDecal = 15.f;
-	UPROPERTY(EditAnywhere) TObjectPtr<USoundBase> ImpactSound;
-	UPROPERTY(EditAnywhere) TObjectPtr<USoundBase> LoopingSound;
+	UPROPERTY(EditAnywhere, Category = "Settings") float HomingResetTime = 2.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Settings") float LifeSpan = 15.f;
+	UPROPERTY(EditAnywhere, Category = "Settings") TObjectPtr<UNiagaraSystem> ImpactEffect;
+	UPROPERTY(EditAnywhere, Category = "Settings") TObjectPtr<UMaterialInterface> BulletHoleDecal;
+	UPROPERTY(EditAnywhere, Category = "Settings") float DecalSize = 15.f;
+	UPROPERTY(EditAnywhere, Category = "Settings") float LifetimeSpanBulletHoleDecal = 15.f;
+	UPROPERTY(EditAnywhere, Category = "Settings") TObjectPtr<USoundBase> ImpactSound;
+	UPROPERTY(EditAnywhere, Category = "Settings") TObjectPtr<USoundBase> LoopingSound;
 	UPROPERTY() TObjectPtr<UAudioComponent> LoopingSoundComponent;
 
 public:	

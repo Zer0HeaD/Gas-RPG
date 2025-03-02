@@ -37,6 +37,7 @@ public:
 	virtual UAnimMontage* GetDeathMontage_Implementation() override;
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual void SetMinionCount_Implementation(int32 Amount) override;
+	virtual UCombatComponent* GetCombatComponent_Implementation() override;
 
 	UPROPERTY(EditAnywhere, Category = "Combat") TArray<FTaggedMontage> AttackMontages;
 

@@ -18,7 +18,9 @@ enum class ECharacterClass : uint8
 	Animal,
 	Sorcerer,
 	Arkanist,
-	Beggar
+	Gunslinger,
+	Imp,
+	Tank
 };
 
 USTRUCT(BlueprintType)

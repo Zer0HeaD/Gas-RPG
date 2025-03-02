@@ -1227,6 +1227,9 @@ bool URPG_ParkourMovementComponent::TryMantle()
 		if (IsServer()) Proxy_bShortMantle = !Proxy_bShortMantle;
 	}
 
+	// Broadcasting Mantle Start Delegate
+	MantleStartDelegate.Broadcast();
+
 	return true;
 }
 FVector URPG_ParkourMovementComponent::GetMantleStartLocation(FHitResult FrontHit, FHitResult SurfaceHit, bool bTallMantle) const

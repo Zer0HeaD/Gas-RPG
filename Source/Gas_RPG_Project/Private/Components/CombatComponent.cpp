@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Character/RPG_ParkourMovementComponent.h"
 //#include "StoredData.h"
 #include "RecoilAnimationComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -683,6 +684,47 @@ void UCombatComponent::UnholsterWeapon()
 	}
 }
 
+void UCombatComponent::QuickUnholsterWeapon()
+{
+	if (!IsPlayerUnnocupied()) return;
+	PlayerState = EPlayerStates::GettingReady;
+
+	AttachCurrentWeaponToSocket(FName("SOCKET_Weapon"));
+
+	if (AnimInstance)
+	{
+		// Stop prev monatge
+		AnimInstance->StopAllMontages(0.05f);
+
+		float currentAnimLength = 0.5f;
+		if (CurrentWeaponSettings.UnholsterQuickAnimation)
+		{
+			AnimInstance->Montage_Play(CurrentWeaponSettings.UnholsterQuickAnimation);
+			currentAnimLength = AnimInstance->GetCurrentActiveMontage()->GetPlayLength();
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterQuickAnimation IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+
+		if (CurrentWeaponSettings.UnholsterSound)
+		{
+			PlaySoundAtOwner(CurrentWeaponSettings.UnholsterSound);
+		}
+		else
+		{
+			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterSound IS NULL!"), true, false, FColor::Red, 5.f);
+		}
+
+		GetWorld()->GetTimerManager().SetTimer(
+			UnholsterHandle,
+			this,
+			&UCombatComponent::HandleUnholstering,
+			currentAnimLength,
+			false);
+	}
+}
+
 void UCombatComponent::HolsterWeapon()
 {
 	if (!IsPlayerUnnocupied()) return;
@@ -1034,6 +1076,22 @@ void UCombatComponent::AttachCurrentWeaponToSocket(FName SocketName)
 bool UCombatComponent::IsPlayerUnnocupied()
 {
 	return PlayerState == EPlayerStates::Unoccupied;
+}
+
+void UCombatComponent::OnStartMantling()
+{
+	if(PlayerOwner) PlayerOwner->StopSprinting();
+
+	StopADS();
+	StopFiring();
+
+	PlayerState = EPlayerStates::Mantling;
+	AttachCurrentWeaponToSocket(FName("SOCKET_Back_Weapon"));
+}
+
+void UCombatComponent::BroadcastQuickUnholster()
+{
+	StartFastUnholsterDelegate.Broadcast();
 }
 
 void UCombatComponent::PlayWeaponAnimation(UAnimMontage* InMontage)

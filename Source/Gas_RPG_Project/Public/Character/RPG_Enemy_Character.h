@@ -29,13 +29,13 @@ protected:
 
 	void BindDelegates();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") int32 Level = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") int32 Level = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character class defaults") float KnockbackImpulseForce = 500.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") float KnockbackImpulseForce = 500.f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly) TObjectPtr<UWidgetComponent> InfoWidget;
 
-	UPROPERTY(EditAnywhere, Category = "AI") TObjectPtr<UBehaviorTree> BehaviorTree;
+	UPROPERTY(EditAnywhere, Category = "Combat") TObjectPtr<UBehaviorTree> BehaviorTree;
 	UPROPERTY() TObjectPtr<ARPGAIController> RPGAIController;
 
 public:
@@ -49,8 +49,8 @@ public:
 	void HeavyHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat") bool bHitReacting;
-	UPROPERTY(BlueprintReadOnly, Category = "Movement") float HitWalkSpeed = 250.f;
-	UPROPERTY(BlueprintReadOnly, Category = "Movement") float BaseWalkSpeed = 450.f;
+	UPROPERTY(BlueprintReadOnly, Category = "Combat") float HitWalkSpeed = 250.f;
+	UPROPERTY(BlueprintReadOnly, Category = "Combat") float BaseWalkSpeed = 450.f;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Combat") TObjectPtr<AActor> CombatTarget;
 

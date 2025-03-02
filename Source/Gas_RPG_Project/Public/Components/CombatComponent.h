@@ -8,6 +8,7 @@
 #include "RecoilAnimationComponent.h"
 #include "Camera/CameraShakeBase.h"
 #include "Actor/RPG_Projectile.h"
+#include "ScalableFloat.h"
 #include "CombatComponent.generated.h"
 
 class AWeaponBase;
@@ -19,6 +20,7 @@ class UParticleSystem;
 class UMaterialInstance;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FShootProjectileDelegate, TSubclassOf<ARPG_Projectile>, ProjectileClass, FVector, MuzzleLocation, FRotator, LaunchDirection);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartFastUnholsterDelegate);
 
 UENUM(BlueprintType)
 enum class EPlayerStates : uint8
@@ -29,6 +31,7 @@ enum class EPlayerStates : uint8
 	SwitchingWeapon			UMETA(DisplayName = "SwitchingWeapon"),
 	MeleeAtacking			UMETA(DisplayName = "MeleeAtacking"),
 	Climbing				UMETA(DisplayName = "Climbing"),
+	Mantling				UMETA(DisplayName = "Mantling"),
 	GettingReady			UMETA(DisplayName = "GettingReady")
 };
 
@@ -79,6 +82,7 @@ struct FWeaponSettings : public FTableRowBase
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") TMap<FGameplayTag, FScalableFloat> DamageTypes;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 MagazineCapacity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 CurrentMagazineAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") EAmmoType AmmoType;
@@ -330,8 +334,6 @@ private:
 	void PlayWeaponAnimation(UAnimMontage* InMontage);
 	void PlaySoundAtOwner(USoundBase* InSound);
 	void HandleEndReload();
-
-	UFUNCTION(BlueprintCallable) void AttachCurrentWeaponToSocket(FName SocketName);
 	bool IsPlayerUnnocupied();
 
 #pragma endregion
@@ -343,5 +345,13 @@ public:
 	FORCEINLINE FWeaponSettings GetCurrentWeaponSettings() { return CurrentWeaponSettings; }
 
 	UFUNCTION(BlueprintCallable) void UnholsterWeapon();
+	UFUNCTION(BlueprintCallable) void QuickUnholsterWeapon();
 	UFUNCTION(BlueprintCallable) void HolsterWeapon();
+	UFUNCTION(BlueprintCallable) void AttachCurrentWeaponToSocket(FName SocketName);
+	UFUNCTION(BlueprintCallable) void OnStartMantling();
+	UFUNCTION(BlueprintCallable) void SetPlayerState(EPlayerStates State) { PlayerState = State; }
+
+	UFUNCTION(BlueprintCallable) void BroadcastQuickUnholster();
+
+	UPROPERTY(BlueprintAssignable) FStartFastUnholsterDelegate StartFastUnholsterDelegate;
 };

@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "Gas_RPG_Project/Gas_RPG_Project.h"
@@ -19,7 +20,7 @@
 ARPG_Projectile::ARPG_Projectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
@@ -32,9 +33,23 @@ ARPG_Projectile::ARPG_Projectile()
 	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile Movement");
-	ProjectileMovement->InitialSpeed = 550;
-	ProjectileMovement->MaxSpeed = 550;
-	ProjectileMovement->ProjectileGravityScale = 0.f;
+	ProjectileMovement->InitialSpeed = 1000;
+	ProjectileMovement->MaxSpeed = 2500;
+	ProjectileMovement->ProjectileGravityScale = 0.15f;
+
+	ProjectileMovement->bInterpMovement = true;
+	ProjectileMovement->bInterpRotation = true;
+	ProjectileMovement->bThrottleInterpolation = true;
+
+	// Setup Homing
+	ProjectileMovement->bIsHomingProjectile = true;
+	/*
+	*	15'000 - Set as "Normal". Need to at least move to evade projectile. Dash not necessary.
+	*	17'000 - Set as "Hard" value. Pretty hard to evade, need a dash
+	*	20'000 - Set as "Ultra Hard". Very hard to evade, but still possible
+	*	25'000 - Tests showed that nearly imposible to evade. NIGHTMARE!
+	*/
+	ProjectileMovement->HomingAccelerationMagnitude = 15000.f;
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +60,8 @@ void ARPG_Projectile::BeginPlay()
 	Sphere->IgnoreActorWhenMoving(GetInstigator(), true);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ARPG_Projectile::OnSphereOverlap);
 
+	// Store Player ref for real time Tracking Homing target
+	PlayerTarget = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
 		LoopingSound, 
@@ -53,6 +70,26 @@ void ARPG_Projectile::BeginPlay()
 		FVector::ZeroVector,
 		EAttachLocation::KeepRelativeOffset,
 		true);
+
+	GetWorld()->GetTimerManager().SetTimer(
+		ResetHomingTimer,
+		this,
+		&ARPG_Projectile::ResetHomingProjectile,
+		HomingResetTime,
+		false);
+}
+
+void ARPG_Projectile::ResetHomingProjectile()
+{
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->bIsHomingProjectile = false;
+		ProjectileMovement->HomingTargetComponent = nullptr;
+
+		FVector LastVelocity = ProjectileMovement->Velocity.GetSafeNormal();
+		ProjectileMovement->Velocity = LastVelocity * ProjectileMovement->MaxSpeed;
+	}
+	SetActorTickEnabled(false);
 }
 
 void ARPG_Projectile::Destroyed()
@@ -64,6 +101,23 @@ void ARPG_Projectile::Destroyed()
 	//	//LoopingSoundComponent->Stop();
 	//}
 	AActor::Destroyed();
+}
+
+void ARPG_Projectile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// NOT MULTIPLAYER READY! We find player on a map and set it as a homing target for homing projectile
+	if (PlayerTarget && ProjectileMovement)
+	{
+		if (UPrimitiveComponent* TargetComponent = Cast<UPrimitiveComponent>(PlayerTarget->GetRootComponent()))
+		{
+			//if (TargetComponent && ProjectileMovement->HomingTargetComponent != TargetComponent)
+			{
+				ProjectileMovement->HomingTargetComponent = TargetComponent;
+			}
+		}
+	}
 }
 
 void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -80,6 +134,7 @@ void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 	if (ARPG_Gas_Character* HitCharacter = Cast<ARPG_Gas_Character>(OtherActor))
 	{
+		SetActorTickEnabled(false);
 		UGameplayStatics::PlaySoundAtLocation(this, HitCharacter->HitSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitCharacter->HitEffect, GetActorLocation());
 	}

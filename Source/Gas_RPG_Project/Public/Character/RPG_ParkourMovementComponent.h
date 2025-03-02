@@ -7,6 +7,7 @@
 #include "RPG_ParkourMovementComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDashStartDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMantleStartDelegate);
 
 class ARPG_Player_Character;
 
@@ -197,6 +198,7 @@ public:
 
 	//DELEGATES
 	UPROPERTY(BlueprintAssignable) FDashStartDelegate DashStartDelegate;
+	UPROPERTY(BlueprintAssignable) FMantleStartDelegate MantleStartDelegate;
 
 	URPG_ParkourMovementComponent();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
