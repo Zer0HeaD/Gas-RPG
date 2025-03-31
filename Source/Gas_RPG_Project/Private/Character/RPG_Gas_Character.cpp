@@ -78,6 +78,7 @@ UCombatComponent* ARPG_Gas_Character::GetCombatComponent_Implementation()
 void ARPG_Gas_Character::MulticastHandleDeath_Implementation()
 {
 	//TODO: Simulate physics of weapon
+	//TODO: Return used Token in blueprints (enemy can dead while attacking)
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);

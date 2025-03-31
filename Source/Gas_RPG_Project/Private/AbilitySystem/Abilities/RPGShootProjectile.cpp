@@ -39,19 +39,16 @@ void URPGShootProjectile::SpawnProjectile(TSubclassOf<ARPG_Projectile> Projectil
 		Source_ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), Source_ASC->MakeEffectContext());
 
 	FRPG_GameplayTags GameplayTags = FRPG_GameplayTags::Get();
+	//UAbilitySystemComponent& comp;
 
-	//if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	if (UCombatComponent* AvatarCombatComponent = ICombatInterface::Execute_GetCombatComponent(GetAvatarActorFromActorInfo()))
 	{
-		/*CombatInterface->GetCombatComponent()*/
-		if (UCombatComponent* AvatarCombatComponent = ICombatInterface::Execute_GetCombatComponent(GetAvatarActorFromActorInfo()))
-		{
-			auto Local_DamageTypes = AvatarCombatComponent->GetCurrentWeaponSettings().DamageTypes;
+		auto Local_DamageTypes = AvatarCombatComponent->GetCurrentWeaponSettings().DamageTypes;
 
-			for (auto& Pair : Local_DamageTypes)
-			{
-				const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-				UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
-			}
+		for (auto& Pair : Local_DamageTypes)
+		{
+			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
 		}
 	}
 
