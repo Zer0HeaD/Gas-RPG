@@ -370,21 +370,16 @@ void URPG_ParkourMovementComponent::UpdateCharacterStateBeforeMovement(float Del
 		}
 	}
 
-
+	// Decided to use another vault/mantle system in blueprint
 	//Try Mantle / Climb
 	if (ExtendedCharacterOwner->bPressedExtendedJump)
 	{
-		if (TryMantle())
+		/*if (TryMantle())
 		{
 			SLOG("START MANTLE")
 				ExtendedCharacterOwner->StopJumping();
 		}
-		/*else if (TryClimb())
-		{
-			SLOG("START CLIMB")
-			ExtendedCharacterOwner->StopJumping();
-		}*/
-		else
+		else*/
 		{
 			SLOG("No mantle/climb - regular jump!")
 				ExtendedCharacterOwner->bPressedExtendedJump = false;
@@ -394,7 +389,7 @@ void URPG_ParkourMovementComponent::UpdateCharacterStateBeforeMovement(float Del
 	}
 
 	//Transition Mantle
-	if (Safe_bTransitionFinished)
+	/*if (Safe_bTransitionFinished)
 	{
 		SLOG("Transition finished")
 			UE_LOG(LogTemp, Warning, TEXT("FINISHED ROOT MOTION"))
@@ -411,7 +406,7 @@ void URPG_ParkourMovementComponent::UpdateCharacterStateBeforeMovement(float Del
 				SetMovementMode(MOVE_Walking);
 			}
 		Safe_bTransitionFinished = false;
-	}
+	}*/
 
 	// LAST UPDATED REALIZATION (FOR SOME REASONS NEVER GOING TO FINISHING MANTLE) TODO: FIX IT!!!
 	/*if (Safe_bTransitionFinished)
@@ -489,8 +484,8 @@ void URPG_ParkourMovementComponent::PhysCustom(float deltaTime, int32 Iterations
 		break;
 	case CMOVE_Hang:
 		break;
-	case CMOVE_Climb:
-		return PhysClimb(deltaTime, Iterations);
+	/*case CMOVE_Climb:
+		return PhysClimb(deltaTime, Iterations);*/
 	default:
 		UE_LOG(LogTemp, Fatal, TEXT("Invalid Movement Mode"))
 	}
