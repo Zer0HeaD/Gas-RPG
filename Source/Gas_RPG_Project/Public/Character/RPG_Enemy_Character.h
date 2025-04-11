@@ -22,6 +22,10 @@ public:
 	ARPG_Enemy_Character(const FObjectInitializer& ObjectInitializer);
 	virtual void PossessedBy(AController* NewController);
 
+	virtual void GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const override;
+	//virtual FVector GetPawnViewLocation() const;
+	//virtual FRotator GetViewRotation() const;
+
 protected:
 	virtual void BeginPlay() override;
 	void InitAbilityActorInfo() override;
