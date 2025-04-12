@@ -51,6 +51,7 @@ ARPG_Player_Character::ARPG_Player_Character(const FObjectInitializer& ObjectIni
 	ParkourMovementComponent->AirControlBoostMultiplier = 2.f;
 	ParkourMovementComponent->AirControlBoostVelocityThreshold = 25.f;
 	ParkourMovementComponent->FallingLateralFriction = 500.f;
+	ParkourMovementComponent->PerchRadiusThreshold = 45.f;
 
 
 	// Create a camera boom (pulls in towards the player if there is a collision)

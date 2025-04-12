@@ -768,6 +768,51 @@ void UCombatComponent::HolsterWeapon()
 	}
 }
 
+void UCombatComponent::QuickHolsterWeapon(bool bVaultMantle)
+{
+	if (!IsPlayerUnnocupied()) return;
+	PlayerState = EPlayerStates::GettingReady;
+
+	if (bVaultMantle)
+	{
+		PlayerState = EPlayerStates::Unoccupied;
+		AttachCurrentWeaponToSocket(FName("SOCKET_Back_Weapon"));
+	}
+	else
+	{
+		if (AnimInstance)
+		{
+			float currentAnimLength = 0.5f;
+			if (CurrentWeaponSettings.HolsterQuickAnimation)
+			{
+				AnimInstance->Montage_Play(CurrentWeaponSettings.HolsterQuickAnimation);
+				currentAnimLength = AnimInstance->GetCurrentActiveMontage()->GetPlayLength();
+			}
+			else
+			{
+				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: HolsterAnimation IS NULL!"), true, false, FColor::Red, 5.f);
+			}
+
+			//PlayWeaponAnimation(CurrentWeaponSettings.WeaponHolsterAnimation);
+			if (CurrentWeaponSettings.HolsterSound)
+			{
+				PlaySoundAtOwner(CurrentWeaponSettings.HolsterSound);
+			}
+			else
+			{
+				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: HolsterSound IS NULL!"), true, false, FColor::Red, 5.f);
+			}
+
+			GetWorld()->GetTimerManager().SetTimer(
+				HolsterHandle,
+				this,
+				&UCombatComponent::HandleHolstering,
+				currentAnimLength,
+				false);
+		}
+	}
+}
+
 void UCombatComponent::HandleUnholstering()
 {
 	PlayerState = EPlayerStates::Unoccupied;

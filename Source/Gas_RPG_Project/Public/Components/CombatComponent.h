@@ -347,6 +347,7 @@ public:
 	UFUNCTION(BlueprintCallable) void UnholsterWeapon();
 	UFUNCTION(BlueprintCallable) void QuickUnholsterWeapon(bool bVaultMantle = false);
 	UFUNCTION(BlueprintCallable) void HolsterWeapon();
+	UFUNCTION(BlueprintCallable) void QuickHolsterWeapon(bool bVaultMantle = false);
 	UFUNCTION(BlueprintCallable) void AttachCurrentWeaponToSocket(FName SocketName);
 	UFUNCTION(BlueprintCallable) void OnStartMantling();
 	UFUNCTION(BlueprintCallable) void SetPlayerState(EPlayerStates State) { PlayerState = State; }
