@@ -345,7 +345,7 @@ public:
 	FORCEINLINE FWeaponSettings GetCurrentWeaponSettings() { return CurrentWeaponSettings; }
 
 	UFUNCTION(BlueprintCallable) void UnholsterWeapon();
-	UFUNCTION(BlueprintCallable) void QuickUnholsterWeapon();
+	UFUNCTION(BlueprintCallable) void QuickUnholsterWeapon(bool bVaultMantle = false);
 	UFUNCTION(BlueprintCallable) void HolsterWeapon();
 	UFUNCTION(BlueprintCallable) void AttachCurrentWeaponToSocket(FName SocketName);
 	UFUNCTION(BlueprintCallable) void OnStartMantling();

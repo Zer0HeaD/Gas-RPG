@@ -684,44 +684,51 @@ void UCombatComponent::UnholsterWeapon()
 	}
 }
 
-void UCombatComponent::QuickUnholsterWeapon()
+void UCombatComponent::QuickUnholsterWeapon(bool bVaultMantle)
 {
 	if (!IsPlayerUnnocupied()) return;
 	PlayerState = EPlayerStates::GettingReady;
 
 	AttachCurrentWeaponToSocket(FName("SOCKET_Weapon"));
 
-	if (AnimInstance)
+	if (bVaultMantle)
 	{
-		// Stop prev monatge
-		AnimInstance->StopAllMontages(0.05f);
+		HandleUnholstering();
+	}
+	else
+	{
+		if (AnimInstance)
+		{
+			// Stop prev monatge
+			AnimInstance->StopAllMontages(0.05f);
 
-		float currentAnimLength = 0.5f;
-		if (CurrentWeaponSettings.UnholsterQuickAnimation)
-		{
-			AnimInstance->Montage_Play(CurrentWeaponSettings.UnholsterQuickAnimation);
-			currentAnimLength = AnimInstance->GetCurrentActiveMontage()->GetPlayLength();
-		}
-		else
-		{
-			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterQuickAnimation IS NULL!"), true, false, FColor::Red, 5.f);
-		}
+			float currentAnimLength = 0.5f;
+			if (CurrentWeaponSettings.UnholsterQuickAnimation)
+			{
+				AnimInstance->Montage_Play(CurrentWeaponSettings.UnholsterQuickAnimation);
+				currentAnimLength = AnimInstance->GetCurrentActiveMontage()->GetPlayLength();
+			}
+			else
+			{
+				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterQuickAnimation IS NULL!"), true, false, FColor::Red, 5.f);
+			}
 
-		if (CurrentWeaponSettings.UnholsterSound)
-		{
-			PlaySoundAtOwner(CurrentWeaponSettings.UnholsterSound);
-		}
-		else
-		{
-			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterSound IS NULL!"), true, false, FColor::Red, 5.f);
-		}
+			if (CurrentWeaponSettings.UnholsterSound)
+			{
+				PlaySoundAtOwner(CurrentWeaponSettings.UnholsterSound);
+			}
+			else
+			{
+				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING: UnholsterSound IS NULL!"), true, false, FColor::Red, 5.f);
+			}
 
-		GetWorld()->GetTimerManager().SetTimer(
-			UnholsterHandle,
-			this,
-			&UCombatComponent::HandleUnholstering,
-			currentAnimLength,
-			false);
+			GetWorld()->GetTimerManager().SetTimer(
+				UnholsterHandle,
+				this,
+				&UCombatComponent::HandleUnholstering,
+				currentAnimLength,
+				false);
+		}
 	}
 }
 
