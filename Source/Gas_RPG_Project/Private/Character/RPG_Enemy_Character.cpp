@@ -41,13 +41,13 @@ void ARPG_Enemy_Character::PossessedBy(AController* NewController)
 	RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangeAttacker"), CharacterClass != ECharacterClass::Warrior);
 }
 
-void ARPG_Enemy_Character::GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const
+/*void ARPG_Enemy_Character::GetActorEyesViewPoint(FVector& Location, FRotator& Rotation) const
 {
 	//OutLocation = GetMesh()->GetSocketLocation("HeadSocket");
 	//OutRotation = GetViewRotation();
 	Location = GetMesh()->GetSocketLocation("HeadSocket");
 	Rotation.Yaw += GetMesh()->GetSocketTransform("HeadSocket", RTS_World).Rotator().Yaw;
-}
+}*/
 
 void ARPG_Enemy_Character::BeginPlay()
 {
