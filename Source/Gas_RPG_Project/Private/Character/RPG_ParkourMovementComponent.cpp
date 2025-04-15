@@ -382,7 +382,7 @@ void URPG_ParkourMovementComponent::UpdateCharacterStateBeforeMovement(float Del
 		else*/
 		{
 			SLOG("No mantle/climb - regular jump!")
-				ExtendedCharacterOwner->bPressedExtendedJump = false;
+			ExtendedCharacterOwner->bPressedExtendedJump = false;
 			CharacterOwner->bPressedJump = true;
 			CharacterOwner->CheckJumpInput(DeltaSeconds);
 		}
@@ -1627,11 +1627,17 @@ void URPG_ParkourMovementComponent::WalkReleased()
 
 void URPG_ParkourMovementComponent::CrouchPressed()
 {
-	bWantsToCrouch = ~bWantsToCrouch;
+	bWantsToCrouch = true;
 }
 void URPG_ParkourMovementComponent::CrouchReleased()
 {
+	bWantsToCrouch = false;
 	//GetWorld()->GetTimerManager().ClearTimer(TimerHandle_EnterProne);
+}
+
+void URPG_ParkourMovementComponent::ToggleCrouch()
+{
+	bWantsToCrouch = ~bWantsToCrouch;
 }
 
 void URPG_ParkourMovementComponent::DashPressed()

@@ -235,9 +235,9 @@ void ARPG_Player_Character::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	if (URPGInputComponent* RPGInputComponent = CastChecked<URPGInputComponent>(PlayerInputComponent))
 	{
 
-		// Jumping
-		RPGInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		RPGInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		// Jumping assign in blueprint with Vault/Mantle system
+		//RPGInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		//RPGInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
 		RPGInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARPG_Player_Character::Move);

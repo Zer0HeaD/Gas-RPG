@@ -309,6 +309,8 @@ public:
 
 	UFUNCTION(BlueprintCallable) void CrouchPressed();
 	UFUNCTION(BlueprintCallable) void CrouchReleased();
+	UFUNCTION(BlueprintCallable) void ToggleCrouch();
+
 
 	UFUNCTION(BlueprintCallable) void DashPressed();
 	UFUNCTION(BlueprintCallable) void DashReleased();

@@ -32,7 +32,8 @@ enum class EPlayerStates : uint8
 	MeleeAtacking			UMETA(DisplayName = "MeleeAtacking"),
 	Climbing				UMETA(DisplayName = "Climbing"),
 	Mantling				UMETA(DisplayName = "Mantling"),
-	GettingReady			UMETA(DisplayName = "GettingReady")
+	GettingReady			UMETA(DisplayName = "GettingReady"),
+	Unarmed					UMETA(DisplayName = "Unarmed")
 };
 
 UENUM(BlueprintType)
