@@ -13,6 +13,9 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/RPG_AbilitySystemLibrary.h"
 
+#include "Perception/AISense_Damage.h"
+#include "Perception/AIPerceptionSystem.h"
+
 #include "Character/RPG_Gas_Character.h"
 
 
@@ -163,6 +166,15 @@ void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		if (UAbilitySystemComponent* Target_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			Target_ASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+
+			// Temp: Set Damage Amount to 0.f . No need for that at 04.16.2025.
+			UAISense_Damage::ReportDamageEvent(
+				this, 
+				OtherActor, 
+				GetInstigator(), 
+				0.f, 
+				SweepResult.ImpactPoint, 
+				OtherActor->GetActorLocation());
 		}
 		
 
