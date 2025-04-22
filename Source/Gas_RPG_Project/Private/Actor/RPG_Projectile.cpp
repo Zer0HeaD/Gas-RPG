@@ -167,17 +167,15 @@ void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			Target_ASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 
-			// Temp: Set Damage Amount to 0.f . No need for that at 04.16.2025.
+			// Temp: Set Damage Amount to 1.f . No need for that at 04.16.2025.
 			UAISense_Damage::ReportDamageEvent(
-				this, 
-				OtherActor, 
-				GetInstigator(), 
-				0.f, 
-				SweepResult.ImpactPoint, 
+				GetWorld(),
+				OtherActor,
+				GetInstigator(),
+				1.f,
+				SweepResult.ImpactPoint,
 				OtherActor->GetActorLocation());
 		}
-		
-
 		Destroy();
 	}
 	else
