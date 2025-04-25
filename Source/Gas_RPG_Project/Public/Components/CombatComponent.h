@@ -221,8 +221,8 @@ protected:
 		FVector LaunchDirection);
 
 public:
-	void StartADS();
-	void StopADS();
+	UFUNCTION(BlueprintCallable) void StartADS();
+	UFUNCTION(BlueprintCallable) void StopADS();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) EPlayerStates PlayerState = EPlayerStates::Unoccupied;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) bool bInADS = false;

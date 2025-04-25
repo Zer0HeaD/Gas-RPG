@@ -129,6 +129,7 @@ void ARPG_Enemy_Character::Die()
 	if (RPGAIController) RPGAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsDead"), true);
 
 	InfoWidget->DestroyComponent(true);
+	GetController()->Destroy();
 	Super::Die();
 }
 

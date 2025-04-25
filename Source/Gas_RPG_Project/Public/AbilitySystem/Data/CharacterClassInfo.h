@@ -20,7 +20,14 @@ enum class ECharacterClass : uint8
 	Arkanist,
 	Gunslinger,
 	Imp,
-	Tank
+	Tank,
+
+	Trooper_Rifle,
+	Trooper_Pistol,
+	Trooper_Shotgun,
+	Trooper_Melee,
+
+	Infected_Regular
 };
 
 USTRUCT(BlueprintType)
