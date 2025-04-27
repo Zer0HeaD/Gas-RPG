@@ -26,6 +26,13 @@ UCombatComponent::UCombatComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	// INITIALIZE EQUIPMENT AMMO DATA
+	AmmoMap.Add(EAmmoType::Ammo_AR, FAmmoData(25, 50));
+	AmmoMap.Add(EAmmoType::Ammo_SMG, FAmmoData(25, 50));
+	AmmoMap.Add(EAmmoType::Ammo_Pistol, FAmmoData(25, 50));
+	AmmoMap.Add(EAmmoType::Ammo_Shotgun, FAmmoData(25, 50));
+
+
 	// SOCKET_Weapon
 	// SOCKET_Back_Weapon
 }
@@ -45,12 +52,6 @@ void UCombatComponent::BeginPlay()
 		AnimInstance = PlayerOwner->GetMesh()->GetAnimInstance();
 		PlayerRecoilAnimComponent = PlayerOwner->RecoilAnimationComponent;
 	}
-
-	// INITIALIZE EQUIPMENT AMMO DATA
-	AmmoMap.Add(EAmmoType::Ammo_AR, FAmmoData(120, 180));
-	AmmoMap.Add(EAmmoType::Ammo_SMG, FAmmoData(140, 210));
-	AmmoMap.Add(EAmmoType::Ammo_Pistol, FAmmoData(45, 90));
-	AmmoMap.Add(EAmmoType::Ammo_Shotgun, FAmmoData(24, 48));
 
 	// Spawn a startupGun
 	FActorSpawnParameters spawnParams;
@@ -73,6 +74,14 @@ void UCombatComponent::InitializeCurrentWeaponVariables()
 	if (CurrentWeapon != nullptr)
 	{
 		CurrentWeaponSettings = CurrentWeapon->WeaponSettings;
+		if (!StoredAmmoInMag.Contains(CurrentWeaponSettings.AmmoType))
+		{
+			StoredAmmoInMag.Add(CurrentWeaponSettings.AmmoType, CurrentWeaponSettings.CurrentMagazineAmmo);
+		}
+		else
+		{
+			CurrentWeaponSettings.CurrentMagazineAmmo = *StoredAmmoInMag.Find(CurrentWeaponSettings.AmmoType);
+		}
 
 		PlayerRecoilAnimComponent->Init(CurrentWeaponSettings.RecoilAnimData,
 			CurrentWeaponSettings.FireRateAnimation, CurrentWeaponSettings.Burst);
@@ -85,7 +94,7 @@ void UCombatComponent::InitializeCurrentWeaponVariables()
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(GetWorld(), TEXT("ERROR! FAILED TO UPDATE WEAPON SETTINGS!"), true, false, FColor::Red, 10.f);
+		PrintWarningStringToViewportAndLog(TEXT("ERROR! FAILED TO UPDATE WEAPON SETTINGS!"));
 	}
 }
 
@@ -412,6 +421,15 @@ void UCombatComponent::OnFire()
 		if (CurrentWeaponSettings.CurrentMagazineAmmo > 0)
 		{
 			CurrentWeaponSettings.CurrentMagazineAmmo--;
+			if (StoredAmmoInMag.Contains(CurrentWeaponSettings.AmmoType))
+			{
+				StoredAmmoInMag[CurrentWeaponSettings.AmmoType] = CurrentWeaponSettings.CurrentMagazineAmmo;
+			}
+			else
+			{
+				PrintWarningStringToViewportAndLog(
+					TEXT("ERROR! FAILED TO UPDATE WEAPON STORED AMMO DURING SHOOTING!"));
+			}
 
 			for (int i = 0; i < CurrentWeaponSettings.NumberOfBulletsPerShot; ++i)
 			{
@@ -1128,6 +1146,17 @@ void UCombatComponent::AttachCurrentWeaponToSocket(FName SocketName)
 bool UCombatComponent::IsPlayerUnnocupied()
 {
 	return PlayerState == EPlayerStates::Unoccupied;
+}
+
+void UCombatComponent::PrintWarningStringToViewportAndLog(FString inString)
+{
+	UKismetSystemLibrary::PrintString(
+		GetWorld(),
+		inString,
+		true,
+		false,
+		FColor::Red,
+		10.f);
 }
 
 void UCombatComponent::OnStartMantling()

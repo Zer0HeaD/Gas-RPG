@@ -315,6 +315,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
 	TMap<EAmmoType, FAmmoData> AmmoMap;
 
+	TMap<EAmmoType, int32> StoredAmmoInMag;
+
 	UFUNCTION(BlueprintCallable) void AddAmmo(EAmmoType AmmoType, int32 AmountToAdd);
 	UFUNCTION(BlueprintCallable) bool ConsumeAmmo(EAmmoType AmmoType, int32 AmountConsume); // CURRENTLY NOT IN USE!
 	UFUNCTION(BlueprintCallable) void ReloadWeapon(EAmmoType AmmoType);
@@ -336,6 +338,8 @@ private:
 	void PlaySoundAtOwner(USoundBase* InSound);
 	void HandleEndReload();
 	bool IsPlayerUnnocupied();
+
+	void PrintWarningStringToViewportAndLog(FString inString);
 
 #pragma endregion
 
