@@ -1014,6 +1014,16 @@ void UCombatComponent::HandleReload(EAmmoType AmmoType)
 		CurrentWeaponSettings.CurrentMagazineAmmo += AmmoData->CurrentAmmo;
 		AmmoData->CurrentAmmo = 0;
 	}
+
+	if (StoredAmmoInMag.Contains(CurrentWeaponSettings.AmmoType))
+	{
+		StoredAmmoInMag[CurrentWeaponSettings.AmmoType] = CurrentWeaponSettings.CurrentMagazineAmmo;
+	}
+	else
+	{
+		PrintWarningStringToViewportAndLog(
+			TEXT("ERROR! FAILED TO UPDATE WEAPON STORED AMMO DURING RELOADING!"));
+	}
 }
 
 void UCombatComponent::HandlePumpOrBoltWeaponReload(EAmmoType AmmoType)

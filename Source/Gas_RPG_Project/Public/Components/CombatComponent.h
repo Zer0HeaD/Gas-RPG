@@ -315,7 +315,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
 	TMap<EAmmoType, FAmmoData> AmmoMap;
 
-	TMap<EAmmoType, int32> StoredAmmoInMag;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TMap<EAmmoType, int32> StoredAmmoInMag;
 
 	UFUNCTION(BlueprintCallable) void AddAmmo(EAmmoType AmmoType, int32 AmountToAdd);
 	UFUNCTION(BlueprintCallable) bool ConsumeAmmo(EAmmoType AmmoType, int32 AmountConsume); // CURRENTLY NOT IN USE!
