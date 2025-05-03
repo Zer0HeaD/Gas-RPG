@@ -107,6 +107,9 @@ protected:
 	void StartSprinting();
 	void StopSprintingOnMinimalSpeed();
 
+	UFUNCTION(BlueprintCallable) void StartProne();
+	UFUNCTION(BlueprintCallable) void StopProne();
+
 	FTimerHandle SprintCheckTimerHandle;
 
 	virtual void Landed(const FHitResult& Hit) override;
@@ -134,6 +137,8 @@ private:
 	UPROPERTY() TObjectPtr<URPG_AbilitySystemComponent> RPGAbilitySystemComponent;
 
 	bool bStopPressing = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet Time") float DolphinDiveDilation = 0.35f;
 
 public:
 	virtual void StopJumping() override;

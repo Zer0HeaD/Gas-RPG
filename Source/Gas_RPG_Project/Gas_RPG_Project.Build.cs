@@ -12,12 +12,16 @@ public class Gas_RPG_Project : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "GameplayTasks", "Niagara", "AIModule", "RecoilAnimation" });
 
-		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
-		// Uncomment if you are using online features
-		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+        PrivateDependencyModuleNames.AddRange(new string[] { "AnimGraphRuntime" });
 
-		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
-	}
+        //"AnimGraphRuntime" for prone
+
+        // Uncomment if you are using Slate UI
+        // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+
+        // Uncomment if you are using online features
+        // PrivateDependencyModuleNames.Add("OnlineSubsystem");
+
+        // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+    }
 }

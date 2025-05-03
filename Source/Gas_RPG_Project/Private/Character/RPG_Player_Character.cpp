@@ -444,9 +444,40 @@ void ARPG_Player_Character::StopSprintingOnMinimalSpeed()
 	}
 }
 
+void ARPG_Player_Character::StartProne()
+{
+	if (ParkourMovementComponent->IsSprinting())
+	{
+		StopSprinting();
+		ParkourMovementComponent->DolphinDivePressed();
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), DolphinDiveDilation);
+	}
+	else
+	{
+		ParkourMovementComponent->PronePressed();
+	}
+}
+
+void ARPG_Player_Character::StopProne()
+{
+	ParkourMovementComponent->ProneReleased();
+}
+
 void ARPG_Player_Character::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
+
+	if (ParkourMovementComponent->IsDolphinDive())
+	{
+		// apply custom params
+		ParkourMovementComponent->GravityScale = 1.f;
+		ParkourMovementComponent->BrakingDecelerationFalling = 300.f;
+		ParkourMovementComponent->FallingLateralFriction = 500.f;
+
+		ParkourMovementComponent->Safe_bWantsToDolphinDive = false;
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+		ParkourMovementComponent->PronePressed();
+	}
 }
 
 void ARPG_Player_Character::OnAimStarted_Implementation() {}
