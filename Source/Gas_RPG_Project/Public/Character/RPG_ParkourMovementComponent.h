@@ -160,7 +160,6 @@ private:
 
 	//FLAGS
 	bool Safe_bPrevWantsToCrouch;
-	bool Safe_bWantsToProne;
 	bool Safe_bWantsToDash;
 
 	bool Safe_bHadAnimRootMotion;
@@ -189,7 +188,7 @@ private:
 
 public:
 
-
+	UPROPERTY(BlueprintReadOnly) bool Safe_bWantsToProne;
 	UPROPERTY(BlueprintReadOnly) float TransitionQueuedMontageSpeed;
 
 	UPROPERTY(BlueprintReadOnly) bool Safe_bWantsToSprint;
