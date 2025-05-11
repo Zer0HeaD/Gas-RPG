@@ -206,7 +206,7 @@ void URPG_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 			const bool bBlock = URPG_AbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
 			const bool bCriticalHit = URPG_AbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
-			ShowFloatingText(Props, local_incomingDamage, bBlock, bCriticalHit);
+			//ShowFloatingText(Props, local_incomingDamage, bBlock, bCriticalHit);
 		}
 	}
 }

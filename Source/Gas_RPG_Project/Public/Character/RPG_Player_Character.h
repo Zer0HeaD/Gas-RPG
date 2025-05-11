@@ -34,6 +34,9 @@ class GAS_RPG_PROJECT_API ARPG_Player_Character : public ARPG_Gas_Character
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FPSCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* TargetComponent;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -139,6 +142,7 @@ private:
 	bool bStopPressing = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Bullet Time") float DolphinDiveDilation = 0.35f;
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet Time") TSubclassOf<UCameraShakeBase> DolphinDiveLandCameraShake;
 
 public:
 	virtual void StopJumping() override;
@@ -171,4 +175,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void UpdateWeaponBarCurrentAmmo();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void UpdateWeaponBarMaxAmmo();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void CreateWeaponBar();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Shooting") void PlayerHitReactEvent(const FGameplayTag CallbackTag, int32 NewCount);
+
+	USceneComponent* GetTargetComponent() { return TargetComponent; }
 };

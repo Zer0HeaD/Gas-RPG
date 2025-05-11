@@ -130,6 +130,8 @@ void ARPG_Enemy_Character::Die()
 
 	InfoWidget->DestroyComponent(true);
 	GetController()->Destroy();
+
+	OnDeathEvent();
 	Super::Die();
 }
 

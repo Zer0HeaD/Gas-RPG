@@ -22,6 +22,7 @@
 #include "Character/RPG_ParkourMovementComponent.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "RPG_GameplayTags.h"
 
 ARPG_Player_Character::ARPG_Player_Character(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<URPG_ParkourMovementComponent>
@@ -66,6 +67,9 @@ ARPG_Player_Character::ARPG_Player_Character(const FObjectInitializer& ObjectIni
 
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	RecoilAnimationComponent = CreateDefaultSubobject<URecoilAnimationComponent>(TEXT("RecoilAnimationComponent"));
+
+	TargetComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Target Component"));
+	TargetComponent->SetupAttachment(GetMesh(), "headSocket");
 }
 
 void ARPG_Player_Character::PossessedBy(AController* NewController)
@@ -138,6 +142,14 @@ void ARPG_Player_Character::InitAbilityActorInfo()
 		}
 	}
 	InitializeDefaultAttributes();
+
+	if (const URPG_AttributeSet* RPG_AS = Cast<URPG_AttributeSet>(AttributeSet))
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(
+			FRPG_GameplayTags::Get().Effects_HitReact,
+			EGameplayTagEventType::NewOrRemoved).AddUObject(
+				this, &ARPG_Player_Character::PlayerHitReactEvent);
+	}
 }
 
 URPG_AbilitySystemComponent* ARPG_Player_Character::GetRPG_ASC()
@@ -476,6 +488,18 @@ void ARPG_Player_Character::Landed(const FHitResult& Hit)
 
 		ParkourMovementComponent->Safe_bWantsToDolphinDive = false;
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+
+		if (DolphinDiveLandCameraShake != NULL)
+		{
+			UGameplayStatics::GetPlayerCameraManager(this, 0)->PlayWorldCameraShake(
+				GetWorld(),
+				DolphinDiveLandCameraShake,
+				GetActorLocation(),
+				0.f,
+				500.f,
+				1.f);
+		}
+
 		ParkourMovementComponent->PronePressed();
 	}
 }

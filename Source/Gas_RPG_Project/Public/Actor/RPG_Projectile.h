@@ -10,6 +10,7 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class UNiagaraSystem;
+class ARPG_Player_Character;
 
 
 UCLASS()
@@ -40,7 +41,7 @@ protected:
 		const FHitResult& SweepResult);
 private:
 	bool bHit = false;
-	AActor* PlayerTarget = nullptr;
+	ARPG_Player_Character* PlayerTarget = nullptr;
 	FTimerHandle ResetHomingTimer;
 	void ResetHomingProjectile();
 

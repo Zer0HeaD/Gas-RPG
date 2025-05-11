@@ -43,7 +43,8 @@ enum class EAmmoType : uint8
 	Ammo_SMG		UMETA(DisplayName = "Submachine Gun Ammo"),
 	Ammo_Pistol		UMETA(DisplayName = "Pistol Ammo"),
 	Ammo_Shotgun	UMETA(DisplayName = "Shotgun Ammo"),
-	// Add more ammo types as needed
+	Ammo_Revolver	UMETA(DisplayName = "Revolver Ammo")
+	//
 };
 
 USTRUCT(BlueprintType)
@@ -88,6 +89,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") int32 CurrentMagazineAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") EAmmoType AmmoType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") bool IsPumpOrBoltAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Default Config") bool IsSupressed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PumpOrBolt", meta = (EditCondition = "IsPumpOrBoltAction", EditConditionHides))
 	UAnimMontage* ReloadInsertAnimation;
@@ -314,6 +316,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
 	TMap<EAmmoType, FAmmoData> AmmoMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
+	float ShotLoudness = 10.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CombatSystem, meta = (AllowPrivateAccess = "true"))
+	float MaxRange = 3000.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) TMap<EAmmoType, int32> StoredAmmoInMag;
 

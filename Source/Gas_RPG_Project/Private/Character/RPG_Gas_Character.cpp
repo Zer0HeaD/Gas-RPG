@@ -16,6 +16,9 @@ ARPG_Gas_Character::ARPG_Gas_Character(const FObjectInitializer& ObjectInitializ
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
+
+
 	Weapon = CreateDefaultSubobject<UStaticMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("Greystone_Sword_Socket"));
 

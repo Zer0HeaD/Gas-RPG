@@ -17,6 +17,7 @@
 #include "Perception/AIPerceptionSystem.h"
 
 #include "Character/RPG_Gas_Character.h"
+#include "Character/RPG_Player_Character.h"
 
 
 // Sets default values
@@ -64,7 +65,7 @@ void ARPG_Projectile::BeginPlay()
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ARPG_Projectile::OnSphereOverlap);
 
 	// Store Player ref for real time Tracking Homing target
-	PlayerTarget = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	PlayerTarget = Cast<ARPG_Player_Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
 		LoopingSound, 
@@ -113,12 +114,9 @@ void ARPG_Projectile::Tick(float DeltaTime)
 	// NOT MULTIPLAYER READY! We find player on a map and set it as a homing target for homing projectile
 	if (PlayerTarget && ProjectileMovement)
 	{
-		if (UPrimitiveComponent* TargetComponent = Cast<UPrimitiveComponent>(PlayerTarget->GetRootComponent()))
+		//if (TargetComponent && ProjectileMovement->HomingTargetComponent != TargetComponent)
 		{
-			//if (TargetComponent && ProjectileMovement->HomingTargetComponent != TargetComponent)
-			{
-				ProjectileMovement->HomingTargetComponent = TargetComponent;
-			}
+			ProjectileMovement->HomingTargetComponent = PlayerTarget->GetTargetComponent();
 		}
 	}
 }
@@ -165,6 +163,12 @@ void ARPG_Projectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		if (UAbilitySystemComponent* Target_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			if (OtherActor != UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) && 
+				SweepResult.BoneName == "head")
+			{
+				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("HEADSHOT!"), true, false, FColor::Red, 5.f);
+				DamageEffectSpecHandle.Data->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Damage.Physical")), 9999.f);
+			}
 			Target_ASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 
 			// Temp: Set Damage Amount to 1.f . No need for that at 04.16.2025.

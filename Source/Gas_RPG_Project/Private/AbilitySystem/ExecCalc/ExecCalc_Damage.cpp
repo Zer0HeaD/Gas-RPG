@@ -150,8 +150,8 @@ void UExecCalc_Damage::Execute_Implementation(
 	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	URPG_AbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 
-	// if block, halve the damage.
-	Damage = bBlocked ? Damage * 0.5f : Damage;
+	// if block, halve the damage. Temporarly disable before pitch demo (05.06.2025)
+	Damage = bBlocked ? Damage /** 0.5f*/ : Damage;
 
 	// Armor Penetration ignores the percentage of the target's armor
 	float TargetArmor = 0.f;
@@ -205,8 +205,8 @@ void UExecCalc_Damage::Execute_Implementation(
 
 	URPG_AbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
-	// Double damage plus a bonus of critical hit
-	Damage = bCriticalHit ? Damage * 2.f + SourceCriticalHitDamage : Damage;
+	// Double damage plus a bonus of critical hit. Temporarly disable before pitch demo (05.06.2025)
+	Damage = bCriticalHit ? Damage /** 2.f + SourceCriticalHitDamage*/ : Damage;
 
 
 	const FGameplayModifierEvaluatedData EvaluatedData(

@@ -18,6 +18,7 @@
 
 #include "DrawDebugHelpers.h"
 #include <random>
+#include "Perception/AISense_Hearing.h"
 
 // Sets default values for this component's properties
 UCombatComponent::UCombatComponent()
@@ -27,11 +28,11 @@ UCombatComponent::UCombatComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// INITIALIZE EQUIPMENT AMMO DATA
-	AmmoMap.Add(EAmmoType::Ammo_AR, FAmmoData(25, 50));
-	AmmoMap.Add(EAmmoType::Ammo_SMG, FAmmoData(25, 50));
-	AmmoMap.Add(EAmmoType::Ammo_Pistol, FAmmoData(25, 50));
-	AmmoMap.Add(EAmmoType::Ammo_Shotgun, FAmmoData(25, 50));
-
+	AmmoMap.Add(EAmmoType::Ammo_AR, FAmmoData(18, 36));
+	AmmoMap.Add(EAmmoType::Ammo_SMG, FAmmoData(21, 42));
+	AmmoMap.Add(EAmmoType::Ammo_Pistol, FAmmoData(9, 24));
+	AmmoMap.Add(EAmmoType::Ammo_Shotgun, FAmmoData(8, 16));
+	AmmoMap.Add(EAmmoType::Ammo_Revolver, FAmmoData(6, 18));
 
 	// SOCKET_Weapon
 	// SOCKET_Back_Weapon
@@ -124,7 +125,7 @@ void UCombatComponent::StartFiring()
 			}
 			else
 			{
-				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock semi fire!"), true, false, FColor::Orange, 2.f);
+				//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock semi fire!"), true, false, FColor::Orange, 2.f);
 			}
 
 			break;
@@ -155,7 +156,7 @@ void UCombatComponent::StartFiring()
 			}
 			else
 			{
-				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock semi fire!"), true, false, FColor::Orange, 2.f);
+				//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock semi fire!"), true, false, FColor::Orange, 2.f);
 			}
 
 			break;
@@ -201,7 +202,7 @@ void UCombatComponent::StartFiring()
 			}
 			else
 			{
-				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock burst fire!"), true, false, FColor::Orange, 2.f);
+				//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Wait for unlock burst fire!"), true, false, FColor::Orange, 2.f);
 			}
 
 			break;
@@ -319,13 +320,13 @@ void UCombatComponent::SwapWeapons(int32 NewWeaponIndex)
 	}
 	else
 	{
-		UKismetSystemLibrary::PrintString(
+		/*UKismetSystemLibrary::PrintString(
 			GetWorld(), 
 			TEXT("WARNING: FAILED TO SWAP A GUNS. INDEX OUT OF BOUNDS OR WEAPONS ARRAY CONTAINS ONLY ONE GUN!"), 
 			true, 
 			false, 
 			FColor::Red, 
-			5.f);
+			5.f);*/
 	}
 }
 
@@ -405,7 +406,7 @@ void UCombatComponent::OnFire()
 	const UWorld* World = GetWorld();
 	if (CurrentWeapon == nullptr)
 	{
-		UKismetSystemLibrary::PrintString(World, TEXT("WEAPON NOT VALID FOR MAKE A SHOT!"));
+		//UKismetSystemLibrary::PrintString(World, TEXT("WEAPON NOT VALID FOR MAKE A SHOT!"));
 		return;
 	}
 
@@ -447,7 +448,7 @@ void UCombatComponent::OnFire()
 			}
 			else
 			{
-				UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING! No shellEject to launch!"), true, false, FColor::Red, 5.f);
+				//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("WARNING! No shellEject to launch!"), true, false, FColor::Red, 5.f);
 			}
 
 			// Start Input Recoil
@@ -1068,7 +1069,7 @@ void UCombatComponent::HandlePumpOrBoltWeaponReload(EAmmoType AmmoType)
 			}
 			PlayWeaponAnimation(CurrentWeaponSettings.WeaponReloadInsertAnimation);
 
-			UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Continue reload bolt or pump weapon"), true, false, FColor::Orange, 2.f);
+			//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Continue reload bolt or pump weapon"), true, false, FColor::Orange, 2.f);
 		}
 	}
 }
@@ -1083,7 +1084,7 @@ void UCombatComponent::UnlockReload()
 
 	bCanReload = true;
 	PlayerState = EPlayerStates::Unoccupied;
-	UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Reload Unlocked!"), true, false, FColor::Orange, 3.f);
+	//UKismetSystemLibrary::PrintString(GetWorld(), TEXT("Reload Unlocked!"), true, false, FColor::Orange, 3.f);
 }
 
 bool UCombatComponent::CanReload()

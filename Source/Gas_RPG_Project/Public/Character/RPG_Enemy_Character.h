@@ -45,6 +45,7 @@ public:
 #pragma region Combat Interface
 	virtual int32 GetPlayerLevel() override;
 	virtual void Die() override;
+	UFUNCTION(BlueprintImplementableEvent) void OnDeathEvent();
 #pragma endregion
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);

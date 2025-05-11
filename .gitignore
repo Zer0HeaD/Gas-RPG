@@ -159,7 +159,16 @@ Content/Mannequin/*
 Content/Movies/*
 Content/Orasot_Bundle/*
 Content/TopDown/*
+Content/Splash/*
+Content/Stylescape/*
+Content/TheAlertedNPC_Male/*
 
+
+Content/FP_Idle_Loop_ScifiGrenade.uasset
+Content/FP_Idle_Loop_ScifiGrenade1.uasset
+Content/FP_Idle_Pose_ScifiGrenade.uasset
+Content/Sci-fi_Grenade_Unholster_Anim.uasset
+Content/Sci-fi_Grenade_Unholster_Anim_Montage.uasset
 
 Content/SProntRot.uasset
 RPG Food Kit documentation.pdf
