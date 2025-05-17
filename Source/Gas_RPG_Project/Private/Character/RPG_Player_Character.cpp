@@ -89,6 +89,15 @@ void ARPG_Player_Character::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+void ARPG_Player_Character::Die()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		PlayerController->DisableInput(PlayerController);
+	}
+	Super::Die();
+}
+
 int32 ARPG_Player_Character::GetPlayerLevel()
 {
 	const ARPG_PlayerState* RPG_PlayerState = GetPlayerState<ARPG_PlayerState>();
@@ -143,13 +152,7 @@ void ARPG_Player_Character::InitAbilityActorInfo()
 	}
 	InitializeDefaultAttributes();
 
-	if (const URPG_AttributeSet* RPG_AS = Cast<URPG_AttributeSet>(AttributeSet))
-	{
-		AbilitySystemComponent->RegisterGameplayTagEvent(
-			FRPG_GameplayTags::Get().Effects_HitReact,
-			EGameplayTagEventType::NewOrRemoved).AddUObject(
-				this, &ARPG_Player_Character::PlayerHitReactEvent);
-	}
+
 }
 
 URPG_AbilitySystemComponent* ARPG_Player_Character::GetRPG_ASC()

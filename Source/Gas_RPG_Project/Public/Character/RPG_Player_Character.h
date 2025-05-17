@@ -80,6 +80,7 @@ public:
 	ARPG_Player_Character(const FObjectInitializer& ObjectInitializer);
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
+	virtual void Die() override;
 
 #pragma region Combat Interface
 
