@@ -119,7 +119,7 @@ protected:
 	virtual void Landed(const FHitResult& Hit) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	float MinimalSpeedToStopSprinting = 200.f;
+	float MinimalSpeedToStopSprinting = 400.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player's Widgets", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<URPG_UserWidget> PauseMenuWidgetClass;
