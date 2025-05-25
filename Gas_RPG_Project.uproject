@@ -89,6 +89,16 @@
 			"Name": "AdvancedSight",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/760d9d9ffa4845279a3c7fba862f0959"
+		},
+		{
+			"Name": "NarrativeCommonUI",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/f1adaffd049b44cca254832b2beeb1b7"
+		},
+		{
+			"Name": "Narrative",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/b03174e0a1cc4de4b17dcfb2a0ba6884"
 		}
 	]
 }

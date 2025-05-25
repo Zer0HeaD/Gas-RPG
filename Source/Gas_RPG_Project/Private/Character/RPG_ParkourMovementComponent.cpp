@@ -1615,14 +1615,19 @@ void URPG_ParkourMovementComponent::SprintReleased()
 	Safe_bWantsToSprint = false;
 }
 
-void URPG_ParkourMovementComponent::WalkPressed()
+void URPG_ParkourMovementComponent::WalkToggle()
 {
 	Safe_bWantsToWalk = !Safe_bWantsToWalk;
 }
 
+void URPG_ParkourMovementComponent::WalkPressed()
+{
+	Safe_bWantsToWalk = true;
+}
+
 void URPG_ParkourMovementComponent::WalkReleased()
 {
-	//
+	Safe_bWantsToWalk = false;
 }
 
 void URPG_ParkourMovementComponent::CrouchPressed()

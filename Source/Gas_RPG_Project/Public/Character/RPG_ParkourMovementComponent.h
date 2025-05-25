@@ -303,6 +303,7 @@ public:
 	UFUNCTION(BlueprintCallable) void SprintPressed();
 	UFUNCTION(BlueprintCallable) void SprintReleased();
 
+	UFUNCTION(BlueprintCallable) void WalkToggle();
 	UFUNCTION(BlueprintCallable) void WalkPressed();
 	UFUNCTION(BlueprintCallable) void WalkReleased();
 
